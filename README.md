@@ -19,3 +19,19 @@ Options:
   * Ask: show prompt to decide what to do
   * Fix git case: change git to match file system case
   * Fix file case: change file system case to match git
+
+## Screenshots
+
+Before Commit Checking: 
+
+![ScreenShot_CommitDialog.png](assets/images/ScreenShot_CommitDialog.png)
+
+If `fix:` action above is `Ask` and there are files with mismatched case in git:
+
+![ScreenShot_CommitMismatchFound.png](assets/images/ScreenShot_CommitMismatchFound.png)  
+
+Via Review button above or from `Version Control` tool window button
+![vcs-tool-button](assets/images/vcs-tool-button.png):
+
+![ScreenShot_ShowMismatchesDialog.png](assets/images/ScreenShot_ShowMismatchesDialog.png)
+

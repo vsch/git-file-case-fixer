@@ -1,6 +1,30 @@
+/*
+ * MIT License
+ *
+ * Copyright (c) 2018, Vladimir Schneider, vladimir.schneider@gmail.com
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ *
+ */
+
 package com.vladsch.git.filecase.fixer;
 
-import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.project.Project;
@@ -9,7 +33,6 @@ import com.intellij.openapi.vcs.changes.Change;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.vladsch.git.filecase.fixer.GitFileFixerProjectRoots.GitRepoFile;
-import com.vladsch.git.filecase.fixer.GitFileFixerProjectRoots.GitRepoFiles;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -71,47 +94,13 @@ public class GitFileCaseFixerHandlerWorker {
             myMismatchedFixedFiles.addAll(myMismatchedModifiedFiles);
             myMismatchedFixedFiles.addAll(myMismatchedUnmodifiedFiles);
 
-            myMismatchedUnmodifiedFiles.clear();
-            myMismatchedModifiedFiles.clear();
-
-            // remove then add
-            if (myFixerAction == GitFixerConfiguration.FIX_MATCH_FILE_SYSTEM) {
+            // remove git paths then add file paths to change git case
+            if (myFixerAction == GitFixerConfiguration.FIX_GIT) {
                 // remove then add, combine them by git repo and convert in one shot
-                HashMap<GitRepoFiles, ArrayList<GitRepoFile>> repoFileMap = new HashMap<>();
-
-                for (GitRepoFile repoFile : myMismatchedFixedFiles) {
-                    GitRepoFiles gitRepoFiles = repoFile.gitRepo;
-                    ArrayList<GitRepoFile> repoFileList = repoFileMap.computeIfAbsent(gitRepoFiles, repoFiles -> new ArrayList<>());
-                    repoFileList.add(repoFile);
-                }
-
-                for (GitRepoFiles gitRepoFiles : repoFileMap.keySet()) {
-                    ArrayList<GitRepoFile> repoFiles = repoFileMap.get(gitRepoFiles);
-                    ArrayList<String> gitPaths = new ArrayList<>(repoFiles.size());
-                    ArrayList<String> filePaths = new ArrayList<>(repoFiles.size());
-
-                    for (GitRepoFile repoFile : repoFiles) {
-                        gitPaths.add(repoFile.gitPath);
-                        filePaths.add(repoFile.filePath);
-                    }
-
-                    int iMax = repoFiles.size();
-                    for (int i = 0; i < iMax; i += GIT_MAX_PARAMS) {
-                        int nextI = i + GIT_MAX_PARAMS > iMax ? iMax : i + GIT_MAX_PARAMS;
-                        GitRepoFile.matchFileSystem(gitRepoFiles, gitPaths.subList(i, nextI), filePaths.subList(i, nextI));
-                    }
-                }
-            } else if (myFixerAction == GitFixerConfiguration.FIX_MATCH_GIT) {
+                GitFileFixerProjectRoots.fixGitFileCase(myMismatchedFixedFiles);
+            } else if (myFixerAction == GitFixerConfiguration.FIX_FILE_SYSTEM) {
                 // rename file
-                ApplicationManager.getApplication().invokeLater(() -> {
-                    ApplicationManager.getApplication().runWriteAction(() -> {
-                        for (GitRepoFile repoFile : myMismatchedFixedFiles) {
-                            assert repoFile.gitRepo.myRepoRoot != null;
-                            GitRepoFile.matchGit(repoFile.gitRepo, repoFile.filePath, repoFile.gitPath, repoFile.fullPath);
-                            repoFile.matchGit();
-                        }
-                    });
-                });
+                GitFileFixerProjectRoots.fixFileSystemCase(myMismatchedFixedFiles);
             }
         }
     }

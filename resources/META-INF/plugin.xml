@@ -41,7 +41,12 @@
     </extensions>
 
     <actions>
-        <!-- Add your actions here -->
+        <!-- Add action to version control tool window toolbar -->
+        <action id="GitFileCaseFixer.ShowMismatches" class="com.vladsch.git.filecase.fixer.ShowGitFileCaseFixMismatchedAction" popup="false"
+                text="Show git file case mismatches" description="Show all files where git file case does not match the file system file case"
+                icon="PluginIcons.FixerIcon">
+            <add-to-group group-id="ChangesViewToolbar" anchor="last"/>
+        </action>
     </actions>
 
     <project-components>

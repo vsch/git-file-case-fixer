@@ -3,6 +3,7 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/git-file-case-fixer.iml" filepath="$PROJECT_DIR$/git-file-case-fixer.iml" />
+      <module fileurl="file://$PROJECT_DIR$/git-file-case-fixer-assets/git-file-case-fixer-assets.iml" filepath="$PROJECT_DIR$/git-file-case-fixer-assets/git-file-case-fixer-assets.iml" />
     </modules>
   </component>
 </project>

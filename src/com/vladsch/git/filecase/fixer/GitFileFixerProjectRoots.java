@@ -1,3 +1,28 @@
+/*
+ * MIT License
+ *
+ * Copyright (c) 2018, Vladimir Schneider, vladimir.schneider@gmail.com
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ *
+ */
+
 package com.vladsch.git.filecase.fixer;
 
 import com.intellij.openapi.application.ApplicationManager;
@@ -25,6 +50,8 @@ import org.jetbrains.annotations.Nullable;
 import java.io.File;
 import java.io.IOException;
 import java.util.*;
+
+import static com.intellij.vcsUtil.VcsFileUtil.FILE_PATH_LIMIT;
 
 public class GitFileFixerProjectRoots extends AbstractProjectComponent implements DumbAware {
     @NotNull final ProjectLevelVcsManager projectLevelVcsManager;
@@ -57,17 +84,76 @@ public class GitFileFixerProjectRoots extends AbstractProjectComponent implement
         return nonIgnoredFiles;
     }
 
+    public static void fixFileSystemCase(final List<GitRepoFile> fixFileCaseList) {
+        ApplicationManager.getApplication().invokeLater(() -> {
+            ApplicationManager.getApplication().runWriteAction(() -> {
+                for (GitRepoFile repoFile : fixFileCaseList) {
+                    assert repoFile.gitRepo.myRepoRoot != null;
+                    GitRepoFile.matchGit(repoFile.gitRepo, repoFile.filePath, repoFile.gitPath, repoFile.fullPath);
+                    repoFile.matchGit();
+                }
+            });
+        });
+    }
+
+    public static void fixGitFileCase(final List<GitRepoFile> fixGitList) {
+        // remove then add, combine them by git repo and convert in one shot
+        HashMap<GitRepoFiles, ArrayList<GitRepoFile>> repoFileMap = new HashMap<>();
+
+        for (GitRepoFile repoFile : fixGitList) {
+            GitRepoFiles gitRepoFiles = repoFile.gitRepo;
+            ArrayList<GitRepoFile> repoFileList = repoFileMap.computeIfAbsent(gitRepoFiles, repoFiles -> new ArrayList<>());
+            repoFileList.add(repoFile);
+        }
+
+        for (GitRepoFiles gitRepoFiles : repoFileMap.keySet()) {
+            ArrayList<GitRepoFile> repoFiles = repoFileMap.get(gitRepoFiles);
+            ArrayList<String> gitPaths = new ArrayList<>(repoFiles.size());
+            ArrayList<String> filePaths = new ArrayList<>(repoFiles.size());
+
+            for (GitRepoFile repoFile : repoFiles) {
+                gitPaths.add(repoFile.gitPath);
+                filePaths.add(repoFile.filePath);
+            }
+
+            int iMax = repoFiles.size();
+            int lastParam = 0;
+            int gitPathsLength = 0;
+            int filePathsLength = 0;
+            for (int i = 0; i < iMax; i++) {
+                gitPathsLength += gitPaths.get(i).length();
+                filePathsLength += filePaths.get(i).length();
+
+                if (gitPathsLength > FILE_PATH_LIMIT || filePathsLength > FILE_PATH_LIMIT) {
+                    // process lastParam to i-1
+                    GitRepoFile.matchFileSystem(gitRepoFiles, gitPaths.subList(lastParam, i - 1), filePaths.subList(lastParam, i - 1));
+
+                    lastParam = i - 1;
+                    gitPathsLength = gitPaths.get(i).length();
+                    filePathsLength = filePaths.get(i).length();
+                }
+            }
+
+            if (lastParam < iMax) {
+                // process last params
+                GitRepoFile.matchFileSystem(gitRepoFiles, gitPaths.subList(lastParam, iMax), filePaths.subList(lastParam, iMax));
+            }
+        }
+    }
+
     static class GitRepoFile {
         final GitRepoFiles gitRepo;
         final String fullPath;
         final String gitPath;
         final String filePath;
+        int fixAction;
 
         public GitRepoFile(final GitRepoFiles repoFiles, final String fullPath, final String gitPath, final String filePath) {
             this.gitRepo = repoFiles;
             this.fullPath = fullPath;
             this.gitPath = gitPath;
             this.filePath = filePath;
+            fixAction = GitFixerConfiguration.FIX_PROMPT;
         }
 
         public void matchFileSystem() {
@@ -251,8 +337,8 @@ public class GitFileFixerProjectRoots extends AbstractProjectComponent implement
 
             // get the file's git path if not a null repo
             if (repositoryPathMap != NULL_GIT_REPO_FILES) {
-                String fileGitPath = file.getPath().toLowerCase().substring(repositoryPathMap.myRepoPrefix.length());
-                String gitFilePath = repositoryPathMap.myIndexFiles.get(fileGitPath);
+                String fileGitPath = file.getPath().substring(repositoryPathMap.myRepoPrefix.length());
+                String gitFilePath = repositoryPathMap.myIndexFiles.get(fileGitPath.toLowerCase());
                 return new GitRepoFile(repositoryPathMap, file.getPath(), gitFilePath, fileGitPath);
             }
         }

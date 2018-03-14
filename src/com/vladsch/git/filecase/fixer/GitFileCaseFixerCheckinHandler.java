@@ -1,3 +1,28 @@
+/*
+ * MIT License
+ *
+ * Copyright (c) 2018, Vladimir Schneider, vladimir.schneider@gmail.com
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ *
+ */
+
 package com.vladsch.git.filecase.fixer;
 
 import com.intellij.openapi.progress.ProgressIndicator;
@@ -14,8 +39,10 @@ import com.intellij.openapi.vcs.changes.Change;
 import com.intellij.openapi.vcs.changes.CommitExecutor;
 import com.intellij.openapi.vcs.checkin.CheckinHandler;
 import com.intellij.openapi.vcs.ui.RefreshableOnComponent;
+import com.intellij.openapi.wm.WindowManager;
 import com.intellij.ui.HyperlinkLabel;
 import com.intellij.util.PairConsumer;
+import com.vladsch.git.filecase.fixer.GitFileFixerProjectRoots.GitRepoFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -27,6 +54,7 @@ import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.MouseInfo;
 import java.awt.Point;
+import java.util.ArrayList;
 import java.util.Collection;
 
 import static com.intellij.CommonBundle.getCancelButtonText;
@@ -67,10 +95,10 @@ public class GitFileCaseFixerCheckinHandler extends CheckinHandler {
                     String fileType = myConfiguration.CHECK_UNMODIFIED_FILES ? Bundle.message("git.filecase.check.type.unmodified") : Bundle.message("git.filecase.check.type.modified");
 
                     final String result;
-                    if (myConfiguration.FIXER_ACTION == GitFixerConfiguration.FIX_MATCH_FILE_SYSTEM) {
-                        result = Bundle.message("before.checkin.git.filecase.fixer.check", fileType, Bundle.message("git.filecase.fixer.name.match.file-system"));
-                    } else if (myConfiguration.FIXER_ACTION == GitFixerConfiguration.FIX_MATCH_GIT) {
-                        result = Bundle.message("before.checkin.git.filecase.fixer.check", fileType, Bundle.message("git.filecase.fixer.name.match.git"));
+                    if (myConfiguration.FIXER_ACTION == GitFixerConfiguration.FIX_GIT) {
+                        result = Bundle.message("before.checkin.git.filecase.fixer.check", fileType, Bundle.message("git.filecase.fixer.name.git"));
+                    } else if (myConfiguration.FIXER_ACTION == GitFixerConfiguration.FIX_FILE_SYSTEM) {
+                        result = Bundle.message("before.checkin.git.filecase.fixer.check", fileType, Bundle.message("git.filecase.fixer.name.file-system"));
                     } else {
                         result = Bundle.message("before.checkin.git.filecase.fixer.check", fileType, Bundle.message("git.filecase.fixer.name.match.prompt"));
                     }
@@ -116,19 +144,19 @@ public class GitFileCaseFixerCheckinHandler extends CheckinHandler {
                             myPopupMenuActions.show(linkLabel, mouseLinkPos.x, mouseLinkPos.y);
                         } else {
                             JBPopupMenu myPopupMenuActions = new JBPopupMenu("Actions");
-                            final JBCheckboxMenuItem prompt = new JBCheckboxMenuItem(Bundle.message("git.filecase.fixer.name.match.menu.prompt"));
-                            final JBCheckboxMenuItem matchGit = new JBCheckboxMenuItem(Bundle.message("git.filecase.fixer.name.match.menu.git"));
-                            final JBCheckboxMenuItem matchFileSystem = new JBCheckboxMenuItem(Bundle.message("git.filecase.fixer.name.match.menu.file-system"));
+                            final JBCheckboxMenuItem prompt = new JBCheckboxMenuItem(Bundle.message("git.filecase.fixer.name.menu.prompt"));
+                            final JBCheckboxMenuItem fixFileCase = new JBCheckboxMenuItem(Bundle.message("git.filecase.fixer.name.menu.file-system"));
+                            final JBCheckboxMenuItem fixGit = new JBCheckboxMenuItem(Bundle.message("git.filecase.fixer.name.menu.git"));
 
                             myPopupMenuActions.add(prompt);
-                            myPopupMenuActions.add(matchGit);
-                            myPopupMenuActions.add(matchFileSystem);
+                            myPopupMenuActions.add(fixFileCase);
+                            myPopupMenuActions.add(fixGit);
 
                             Runnable updateCheckedState = () -> {
                                 updateCheckBoxText.run();
                                 prompt.setSelected(myConfiguration.FIXER_ACTION == FIX_PROMPT);
-                                matchGit.setSelected(myConfiguration.FIXER_ACTION == GitFixerConfiguration.FIX_MATCH_GIT);
-                                matchFileSystem.setSelected(myConfiguration.FIXER_ACTION == GitFixerConfiguration.FIX_MATCH_FILE_SYSTEM);
+                                fixFileCase.setSelected(myConfiguration.FIXER_ACTION == GitFixerConfiguration.FIX_FILE_SYSTEM);
+                                fixGit.setSelected(myConfiguration.FIXER_ACTION == GitFixerConfiguration.FIX_GIT);
                             };
 
                             updateCheckedState.run();
@@ -138,13 +166,13 @@ public class GitFileCaseFixerCheckinHandler extends CheckinHandler {
                                 updateCheckedState.run();
                             });
 
-                            matchGit.addActionListener(e1 -> {
-                                myConfiguration.FIXER_ACTION = GitFixerConfiguration.FIX_MATCH_GIT;
+                            fixFileCase.addActionListener(e1 -> {
+                                myConfiguration.FIXER_ACTION = GitFixerConfiguration.FIX_FILE_SYSTEM;
                                 updateCheckedState.run();
                             });
 
-                            matchFileSystem.addActionListener(e1 -> {
-                                myConfiguration.FIXER_ACTION = GitFixerConfiguration.FIX_MATCH_FILE_SYSTEM;
+                            fixGit.addActionListener(e1 -> {
+                                myConfiguration.FIXER_ACTION = GitFixerConfiguration.FIX_GIT;
                                 updateCheckedState.run();
                             });
 
@@ -244,9 +272,14 @@ public class GitFileCaseFixerCheckinHandler extends CheckinHandler {
     }
 
     private void showFixes(GitFileCaseFixerHandlerWorker worker) {
-        // TODO: implement dialog with mismatches and allow applying either fix git, fix file case or do nothing
-        // for individual entries
         // after collecting results for display, clear caches
+        ArrayList<GitRepoFile> mismatchedFiles = new ArrayList<>(worker.getMismatchedModifiedFiles());
+        mismatchedFiles.addAll(worker.getMismatchedUnmodifiedFiles());
+        GitFileCaseShowMismatchesDialog dialog = new GitFileCaseShowMismatchesDialog(WindowManager.getInstance().findVisibleFrame().getRootPane(), mismatchedFiles);
+        boolean result = dialog.showAndGet();
+        if (result) {
+            dialog.applyFixes();
+        }
         GitFileFixerProjectRoots.getInstance(myProject).clearCaches();
     }
 
