@@ -1,0 +1,53 @@
+<idea-plugin>
+    <id>com.vladsch.git-file-case-fixer</id>
+    <name>Git File Case Fixer</name>
+    <vendor url="http://github.com/vsch" email="vladimir.schneider@gmail.com">Vladimir Schneider</vendor>
+    <category>VCS integration</category>
+    <depends>com.intellij.modules.lang</depends>
+    <depends optional="false">Git4Idea</depends>
+
+    <description><![CDATA[
+        <div xmlns="http://www.w3.org/1999/html">
+            <h1>Git File Case Fixer Plugin</h1>
+            <p>Detect and fix file case mismatch between git and the file system</p>
+            <p>Adds <strong>Before Commit</strong> check for file case mismatches between git and the file system
+                with corrective actions:</p>
+            <ul>
+                <li>Change git file case to match file system</li>
+                <li>Change file system case to match git</li>
+            </ul>
+        </div>
+        ]]>
+    </description>
+
+    <version>1.0.0</version>
+
+    <idea-version since-build="163.15529"/>
+
+    <change-notes><![CDATA[
+        <div xmlns="http://www.w3.org/1999/html">
+            <h3>0.1.0</h3>
+            <ul>
+                <li>Initial release</li>
+            </ul>
+        </div>
+        ]]>
+    </change-notes>
+
+    <extensions defaultExtensionNs="com.intellij">
+        <!-- Add your extensions here -->
+        <checkinHandlerFactory implementation="com.vladsch.git.filecase.fixer.GitFileCaseFixerCheckinHandlerFactory" />
+        <projectService serviceImplementation="com.vladsch.git.filecase.fixer.GitFixerConfiguration"/>
+    </extensions>
+
+    <actions>
+        <!-- Add your actions here -->
+    </actions>
+
+    <project-components>
+        <component>
+            <implementation-class>com.vladsch.git.filecase.fixer.GitFileFixerProjectRoots</implementation-class>
+            <interface-class>com.vladsch.git.filecase.fixer.GitFileFixerProjectRoots</interface-class>
+        </component>
+    </project-components>
+</idea-plugin>
