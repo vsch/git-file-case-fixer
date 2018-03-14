@@ -2,6 +2,8 @@
 
 **<span style="color:#30A0D8;">Git file case mismatch fixer plugin</span> for JetBrains IDEs**
 
+Download it from the IDE or https://plugins.jetbrains.com/plugin/10533-git-file-case-fixer
+
 Detects and optionally fixes file case mismatch between git and the file system
 
 Adds **Before Commit** check for file case mismatches between git and the file system
