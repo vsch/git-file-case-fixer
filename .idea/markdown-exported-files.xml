@@ -2,8 +2,7 @@
 <project version="4">
   <component name="MarkdownExportedFiles">
     <htmlFiles>
-      <exportedFile path="$PROJECT_DIR$/resources/META-INF/plugin-description.html" settingsVersion="ED6B5AAF-E5A2AC1E" />
-      <exportedFile path="$PROJECT_DIR$/resources/META-INF/VERSION.html" settingsVersion="ED6B5AAF-E5A2AC1E" />
+      <exportedFile path="$PROJECT_DIR$/resources/META-INF/plugin-description.html" settingsVersion="ED6B5AAF-7AE99A35" />
     </htmlFiles>
     <imageFiles />
     <otherFiles />

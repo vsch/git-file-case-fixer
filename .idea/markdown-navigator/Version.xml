@@ -1,6 +1,6 @@
 <component name="MarkdownNavigator.ProfileManager">
   <profile>
-    <option name="myName" value="plugin-description" havePreviewSettings="true" haveParserSettings="true" haveHtmlSettings="true" haveCssSettings="true" haveHtmlExportSettings="true" haveLinkMapSettings="true" profileName="plugin-description">
+    <option name="myName" value="Version" havePreviewSettings="true" haveParserSettings="true" haveHtmlSettings="true" haveCssSettings="true" haveHtmlExportSettings="true" haveLinkMapSettings="true" profileName="Version">
       <PreviewSettings splitEditorLayout="SPLIT" splitEditorPreview="PREVIEW" useGrayscaleRendering="false" zoomFactor="1.0" maxImageWidth="0" showGitHubPageIfSynced="false" allowBrowsingInPreview="false" synchronizePreviewPosition="true" highlightPreviewType="LINE" highlightFadeOut="5" highlightOnTyping="false" synchronizeSourcePosition="true" verticallyAlignSourceAndPreviewSyncPosition="true" showSearchHighlightsInPreview="true" showSelectionInPreview="true" openRemoteLinks="false" replaceUnicodeEmoji="false" lastLayoutSetsDefault="false">
         <PanelProvider>
           <provider providerId="com.vladsch.idea.multimarkdown.editor.javafx.html.panel" providerName="JavaFX WebView" />
@@ -41,19 +41,19 @@
           <option name="EMOJI_SHORTCUTS" value="true" />
           <option name="ENUMERATED_REFERENCES_EXT" value="true" />
           <option name="FLEXMARK_FRONT_MATTER" value="false" />
-          <option name="GFM_LOOSE_BLANK_LINE_AFTER_ITEM_PARA" value="true" />
+          <option name="GFM_LOOSE_BLANK_LINE_AFTER_ITEM_PARA" value="false" />
           <option name="GFM_TABLE_RENDERING" value="false" />
           <option name="GITBOOK_URL_ENCODING" value="false" />
           <option name="GITHUB_LISTS" value="false" />
           <option name="GITHUB_WIKI_LINKS" value="true" />
-          <option name="HEADER_ID_NO_DUPED_DASHES" value="true" />
+          <option name="HEADER_ID_NO_DUPED_DASHES" value="false" />
           <option name="JEKYLL_FRONT_MATTER" value="true" />
           <option name="NO_TEXT_ATTRIBUTES" value="false" />
           <option name="PARSE_HTML_ANCHOR_ID" value="false" />
           <option name="SIM_TOC_BLANK_LINE_SPACER" value="true" />
         </ParserOptions>
       </ParserSettings>
-      <HtmlSettings headerTopEnabled="false" headerBottomEnabled="false" bodyTopEnabled="false" bodyBottomEnabled="false" embedUrlContent="false" addPageHeader="false" embedImages="false" embedHttpImages="false" imageUriSerials="true">
+      <HtmlSettings headerTopEnabled="false" headerBottomEnabled="false" bodyTopEnabled="false" bodyBottomEnabled="false" embedUrlContent="false" addPageHeader="true" embedImages="false" embedHttpImages="false" imageUriSerials="true">
         <GeneratorProvider>
           <provider providerId="com.vladsch.idea.multimarkdown.editor.javafx.html.generator" providerName="JavaFx HTML Generator" />
         </GeneratorProvider>
@@ -62,11 +62,13 @@
         <bodyTop />
         <bodyBottom />
       </HtmlSettings>
-      <CssSettings previewScheme="UI_SCHEME" cssUri="" isCssUriEnabled="false" isCssUriSerial="true" isCssTextEnabled="false" isDynamicPageWidth="true">
+      <CssSettings previewScheme="UI_SCHEME" cssUri="" isCssUriEnabled="false" isCssUriSerial="true" isCssTextEnabled="true" isDynamicPageWidth="true">
         <StylesheetProvider>
           <provider providerId="com.vladsch.idea.multimarkdown.editor.javafx.html.css" providerName="Default JavaFx Stylesheet" />
         </StylesheetProvider>
-        <ScriptProviders />
+        <ScriptProviders>
+          <provider providerId="com.vladsch.idea.multimarkdown.editor.hljs.html.script" providerName="HighlightJS Script" />
+        </ScriptProviders>
         <cssText>.markdown-body,
 .wiki-body {
     font-family: Arial, &quot;Helvetica Neue&quot;, &quot;Segoe UI&quot;, freesans, sans-serif;
@@ -98,7 +100,7 @@ code {
 }</cssText>
         <cssUriHistory />
       </CssSettings>
-      <HtmlExportSettings updateOnSave="true" parentDir="$ProjectFileDir$/resources/META-INF" targetDir="$ProjectFileDir$/resources/META-INF" cssDir="$ProjectFileDir$/resources/META-INF/css" scriptDir="$ProjectFileDir$/resources/META-INF/js" plainHtml="true" imageDir="$ProjectFileDir$/resources/META-INF/img" copyLinkedImages="false" imageUniquifyType="0" targetExt="" useTargetExt="false" noCssNoScripts="true" linkToExportedHtml="false" exportOnSettingsChange="true" regenerateOnProjectOpen="false" linkFormatType="HTTP_ABSOLUTE" />
+      <HtmlExportSettings updateOnSave="false" parentDir="$ProjectFileDir$" targetDir="$ProjectFileDir$" cssDir="" scriptDir="" plainHtml="false" imageDir="$ProjectFileDir$/img" copyLinkedImages="false" imageUniquifyType="0" targetExt="" useTargetExt="false" noCssNoScripts="false" linkToExportedHtml="false" exportOnSettingsChange="true" regenerateOnProjectOpen="false" linkFormatType="HTTP_ABSOLUTE" />
       <LinkMapSettings>
         <textMaps />
       </LinkMapSettings>

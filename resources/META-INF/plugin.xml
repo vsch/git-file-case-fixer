@@ -8,7 +8,7 @@
 
     <description><![CDATA[
         <div xmlns="http://www.w3.org/1999/html">
-            <h1>Git File Case Fixer Plugin</h1>
+            <h1>Git File Case Mismatch Plugin</h1>
             <p>Detect and fix file case mismatch between git and the file system</p>
             <p>Adds <strong>Before Commit</strong> check for file case mismatches between git and the file system
                 with corrective actions:</p>
@@ -16,6 +16,8 @@
                 <li>Change git file case to match file system</li>
                 <li>Change file system case to match git</li>
             </ul>
+            <p><img src="https://github.com/vsch/git-file-case-fixer/raw/master/assets/images/ScreenShot_ShowMismatchesDialog.png" alt="ScreenShot_ShowMismatchesDialog.png" /></p>
+
         </div>
         ]]>
     </description>
@@ -26,7 +28,7 @@
 
     <change-notes><![CDATA[
         <div xmlns="http://www.w3.org/1999/html">
-            <h3>0.1.0</h3>
+            <h3>1.0.0</h3>
             <ul>
                 <li>Initial release</li>
             </ul>

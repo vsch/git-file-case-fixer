@@ -9,7 +9,7 @@
     <ParserSettings gitHubSyntaxChange="false" emojiShortcuts="3" emojiImages="0">
       <PegdownExtensions>
         <option name="ABBREVIATIONS" value="true" />
-        <option name="ANCHORLINKS" value="true" />
+        <option name="ANCHORLINKS" value="false" />
         <option name="ASIDE" value="true" />
         <option name="ATXHEADERSPACE" value="true" />
         <option name="AUTOLINKS" value="true" />
@@ -46,7 +46,7 @@
         <option name="GITBOOK_URL_ENCODING" value="false" />
         <option name="GITHUB_LISTS" value="false" />
         <option name="GITHUB_WIKI_LINKS" value="true" />
-        <option name="HEADER_ID_NO_DUPED_DASHES" value="true" />
+        <option name="HEADER_ID_NO_DUPED_DASHES" value="false" />
         <option name="JEKYLL_FRONT_MATTER" value="true" />
         <option name="NO_TEXT_ATTRIBUTES" value="false" />
         <option name="PARSE_HTML_ANCHOR_ID" value="false" />
@@ -100,7 +100,7 @@ code {
 }</cssText>
       <cssUriHistory />
     </CssSettings>
-    <HtmlExportSettings updateOnSave="false" parentDir="$ProjectFileDir$" targetDir="$ProjectFileDir$" cssDir="" scriptDir="" plainHtml="false" imageDir="$ProjectFileDir$/img" copyLinkedImages="false" imageUniquifyType="0" targetExt="" useTargetExt="false" noCssNoScripts="false" linkToExportedHtml="true" exportOnSettingsChange="true" regenerateOnProjectOpen="false" linkFormatType="HTTP_ABSOLUTE" />
+    <HtmlExportSettings updateOnSave="false" parentDir="$ProjectFileDir$" targetDir="$ProjectFileDir$" cssDir="" scriptDir="" plainHtml="false" imageDir="$ProjectFileDir$/img" copyLinkedImages="false" imageUniquifyType="0" targetExt="" useTargetExt="false" noCssNoScripts="false" linkToExportedHtml="false" exportOnSettingsChange="true" regenerateOnProjectOpen="false" linkFormatType="HTTP_ABSOLUTE" />
     <LinkMapSettings>
       <textMaps />
     </LinkMapSettings>

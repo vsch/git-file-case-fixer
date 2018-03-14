@@ -8,3 +8,5 @@ with corrective actions:
 
 * Change git file case to match file system
 * Change file system case to match git
+
+![ScreenShot_ShowMismatchesDialog.png](https://github.com/vsch/git-file-case-fixer/raw/master/assets/images/ScreenShot_ShowMismatchesDialog.png)

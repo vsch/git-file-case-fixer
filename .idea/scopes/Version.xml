@@ -1,0 +1,3 @@
+<component name="DependencyValidationManager">
+  <scope name="Version" pattern="file[git-file-case-fixer]:resources/META-INF/VERSION.md" />
+</component>
