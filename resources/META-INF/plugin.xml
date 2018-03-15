@@ -22,12 +22,16 @@
         ]]>
     </description>
 
-    <version>1.0.0</version>
+    <version>1.0.2</version>
 
     <idea-version since-build="163.15529"/>
 
     <change-notes><![CDATA[
         <div xmlns="http://www.w3.org/1999/html">
+            <h2>1.0.2</h2>
+            <ul>
+                <li>Fix: message for modified and unmodified found files.</li>
+            </ul>
             <h3>1.0.0</h3>
             <ul>
                 <li>Initial release</li>

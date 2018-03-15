@@ -2,10 +2,16 @@
 
 [TOC]: # " "
 
-- [1.0.0 _ abc](#100---abc)
+- [1.0.2](#102)
+- [1.0.0](#100)
 - [0.0.0](#000)
 
-## 1.0.0 _ abc
+## 1.0.2
+
+* Fix: message for modified and unmodified found files.
+* Fix: vcs tool window icon
+
+## 1.0.0
 
 * Initial release
 
