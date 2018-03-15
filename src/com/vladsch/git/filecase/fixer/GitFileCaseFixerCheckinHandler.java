@@ -41,19 +41,24 @@ import com.intellij.openapi.vcs.checkin.CheckinHandler;
 import com.intellij.openapi.vcs.ui.RefreshableOnComponent;
 import com.intellij.openapi.wm.WindowManager;
 import com.intellij.ui.HyperlinkLabel;
+import com.intellij.ui.JBColor;
+import com.intellij.ui.components.labels.LinkLabel;
+import com.intellij.uiDesigner.core.GridConstraints;
+import com.intellij.uiDesigner.core.GridLayoutManager;
+import com.intellij.uiDesigner.core.Spacer;
 import com.intellij.util.PairConsumer;
+import com.intellij.util.ui.JBUI;
 import com.vladsch.git.filecase.fixer.GitFileFixerProjectRoots.GitRepoFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import javax.rmi.CORBA.Util;
 import javax.swing.JCheckBox;
 import javax.swing.JComponent;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.event.HyperlinkEvent;
-import java.awt.BorderLayout;
-import java.awt.Component;
-import java.awt.MouseInfo;
-import java.awt.Point;
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.Collection;
 
@@ -85,102 +90,110 @@ public class GitFileCaseFixerCheckinHandler extends CheckinHandler {
         return new RefreshableOnComponent() {
             @Override
             public JComponent getComponent() {
-                JPanel panel = new JPanel(new BorderLayout(4, 0));
-                panel.add(checkBox, BorderLayout.WEST);
+                JPanel panel = new JPanel(new BorderLayout(0, 0));
+                JPanel contentPanel = new JPanel(new GridLayoutManager(1, 6, JBUI.emptyInsets(), 4, -1));
+                panel.add(contentPanel, BorderLayout.WEST);
 
-                HyperlinkLabel linkLabel = new HyperlinkLabel("dummy", null);
-                linkLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
-                panel.add(linkLabel, BorderLayout.CENTER);
+                JLabel prefix = new JLabel(Bundle.message("before.checkin.git.filecase.fixer.check.prefix"));
+                LinkLabel fileTypeLink = new LinkLabel("", null);
+                JLabel middle = new JLabel(Bundle.message("before.checkin.git.filecase.fixer.check.middle"));
+                LinkLabel fixLink = new LinkLabel("", null);
+
+                contentPanel.add(checkBox, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, 0, 0, null, null, null));
+                contentPanel.add(prefix, new GridConstraints(0, 1, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, 0, 0, null, null, null));
+                contentPanel.add(fileTypeLink, new GridConstraints(0, 2, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, 0, 0, null, null, null));
+                contentPanel.add(middle, new GridConstraints(0, 3, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, 0, 0, null, null, null));
+                contentPanel.add(fixLink, new GridConstraints(0, 4, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, 0, 0, null, null, null));
+                contentPanel.add(new Spacer(), new GridConstraints(0, 5, 1, 1, GridConstraints.ANCHOR_EAST, GridConstraints.FILL_HORIZONTAL, 0, 0, null, null, null));
+
+                //HyperlinkLabel linkLabel = new HyperlinkLabel("dummy", null);
+                //linkLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
+                //panel.add(linkLabel, BorderLayout.CENTER);
 
                 Runnable updateCheckBoxText = () -> {
                     String fileType = myConfiguration.CHECK_UNMODIFIED_FILES ? Bundle.message("git.filecase.check.type.unmodified") : Bundle.message("git.filecase.check.type.modified");
 
+                    fileTypeLink.setText(fileType);
+
                     final String result;
                     if (myConfiguration.FIXER_ACTION == GitFixerConfiguration.FIX_GIT) {
-                        result = Bundle.message("before.checkin.git.filecase.fixer.check", fileType, Bundle.message("git.filecase.fixer.name.git"));
+                        result = Bundle.message("git.filecase.fixer.name.git");
                     } else if (myConfiguration.FIXER_ACTION == GitFixerConfiguration.FIX_FILE_SYSTEM) {
-                        result = Bundle.message("before.checkin.git.filecase.fixer.check", fileType, Bundle.message("git.filecase.fixer.name.file-system"));
+                        result = Bundle.message("git.filecase.fixer.name.file-system");
                     } else {
-                        result = Bundle.message("before.checkin.git.filecase.fixer.check", fileType, Bundle.message("git.filecase.fixer.name.match.prompt"));
+                        result = Bundle.message("git.filecase.fixer.name.match.prompt");
                     }
 
-                    linkLabel.setHtmlText(result);
+                    fixLink.setText(result);
                 };
 
                 updateCheckBoxText.run();
 
-                linkLabel.addHyperlinkListener( e -> {
-                    if (e.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
-                        String aUrl = (String) e.getDescription();
-                        Point mouseScreenPos = MouseInfo.getPointerInfo().getLocation();
-                        Point editorScreenPos = linkLabel.getLocationOnScreen();
-                        Point mouseLinkPos = new Point(mouseScreenPos.x - editorScreenPos.x, mouseScreenPos.y - editorScreenPos.y);
+                fileTypeLink.setListener((aSource, aLinkData) -> {
+                    JBPopupMenu myPopupMenuActions = new JBPopupMenu();
+                    final JBCheckboxMenuItem checkUnmodifiedFiles = new JBCheckboxMenuItem(Bundle.message("git.filecase.check.unmodified"));
+                    final JBCheckboxMenuItem checkModifiedFiles = new JBCheckboxMenuItem(Bundle.message("git.filecase.check.modified"));
 
-                        if (mouseLinkPos.x < linkLabel.getWidth()/2) {
-                            JBPopupMenu myPopupMenuActions = new JBPopupMenu("Actions");
-                            final JBCheckboxMenuItem checkUnmodifiedFiles = new JBCheckboxMenuItem(Bundle.message("git.filecase.check.unmodified"));
-                            final JBCheckboxMenuItem checkModifiedFiles = new JBCheckboxMenuItem(Bundle.message("git.filecase.check.modified"));
+                    myPopupMenuActions.add(checkUnmodifiedFiles);
+                    myPopupMenuActions.add(checkModifiedFiles);
 
-                            myPopupMenuActions.add(checkUnmodifiedFiles);
-                            myPopupMenuActions.add(checkModifiedFiles);
+                    Runnable updateCheckedState = () -> {
+                        updateCheckBoxText.run();
+                        checkUnmodifiedFiles.setSelected(myConfiguration.CHECK_UNMODIFIED_FILES);
+                        checkModifiedFiles.setSelected(!myConfiguration.CHECK_UNMODIFIED_FILES);
+                    };
 
-                            Runnable updateCheckedState = () -> {
-                                updateCheckBoxText.run();
-                                checkUnmodifiedFiles.setSelected(myConfiguration.CHECK_UNMODIFIED_FILES);
-                                checkModifiedFiles.setSelected(!myConfiguration.CHECK_UNMODIFIED_FILES);
-                            };
+                    updateCheckedState.run();
 
-                            updateCheckedState.run();
+                    checkUnmodifiedFiles.addActionListener(e1 -> {
+                        myConfiguration.CHECK_UNMODIFIED_FILES = true;
+                        updateCheckedState.run();
+                    });
 
-                            checkUnmodifiedFiles.addActionListener(e1 -> {
-                                myConfiguration.CHECK_UNMODIFIED_FILES = true;
-                                updateCheckedState.run();
-                            });
+                    checkModifiedFiles.addActionListener(e1 -> {
+                        myConfiguration.CHECK_UNMODIFIED_FILES = false;
+                        updateCheckedState.run();
+                    });
 
-                            checkModifiedFiles.addActionListener(e1 -> {
-                                myConfiguration.CHECK_UNMODIFIED_FILES = false;
-                                updateCheckedState.run();
-                            });
+                    myPopupMenuActions.show(fileTypeLink, 10, fileTypeLink.getWidth());
+                }, null);
 
-                            myPopupMenuActions.show(linkLabel, mouseLinkPos.x, mouseLinkPos.y);
-                        } else {
-                            JBPopupMenu myPopupMenuActions = new JBPopupMenu("Actions");
-                            final JBCheckboxMenuItem prompt = new JBCheckboxMenuItem(Bundle.message("git.filecase.fixer.name.menu.prompt"));
-                            final JBCheckboxMenuItem fixFileCase = new JBCheckboxMenuItem(Bundle.message("git.filecase.fixer.name.menu.file-system"));
-                            final JBCheckboxMenuItem fixGit = new JBCheckboxMenuItem(Bundle.message("git.filecase.fixer.name.menu.git"));
+                fixLink.setListener((aSource, aLinkData) -> {
+                    JBPopupMenu myPopupMenuActions = new JBPopupMenu();
+                    final JBCheckboxMenuItem prompt = new JBCheckboxMenuItem(Bundle.message("git.filecase.fixer.name.menu.prompt"));
+                    final JBCheckboxMenuItem fixFileCase = new JBCheckboxMenuItem(Bundle.message("git.filecase.fixer.name.menu.file-system"));
+                    final JBCheckboxMenuItem fixGit = new JBCheckboxMenuItem(Bundle.message("git.filecase.fixer.name.menu.git"));
 
-                            myPopupMenuActions.add(prompt);
-                            myPopupMenuActions.add(fixFileCase);
-                            myPopupMenuActions.add(fixGit);
+                    myPopupMenuActions.add(prompt);
+                    myPopupMenuActions.add(fixFileCase);
+                    myPopupMenuActions.add(fixGit);
 
-                            Runnable updateCheckedState = () -> {
-                                updateCheckBoxText.run();
-                                prompt.setSelected(myConfiguration.FIXER_ACTION == FIX_PROMPT);
-                                fixFileCase.setSelected(myConfiguration.FIXER_ACTION == GitFixerConfiguration.FIX_FILE_SYSTEM);
-                                fixGit.setSelected(myConfiguration.FIXER_ACTION == GitFixerConfiguration.FIX_GIT);
-                            };
+                    Runnable updateCheckedState = () -> {
+                        updateCheckBoxText.run();
+                        prompt.setSelected(myConfiguration.FIXER_ACTION == FIX_PROMPT);
+                        fixFileCase.setSelected(myConfiguration.FIXER_ACTION == GitFixerConfiguration.FIX_FILE_SYSTEM);
+                        fixGit.setSelected(myConfiguration.FIXER_ACTION == GitFixerConfiguration.FIX_GIT);
+                    };
 
-                            updateCheckedState.run();
+                    updateCheckedState.run();
 
-                            prompt.addActionListener(e1 -> {
-                                myConfiguration.FIXER_ACTION = FIX_PROMPT;
-                                updateCheckedState.run();
-                            });
+                    prompt.addActionListener(e1 -> {
+                        myConfiguration.FIXER_ACTION = FIX_PROMPT;
+                        updateCheckedState.run();
+                    });
 
-                            fixFileCase.addActionListener(e1 -> {
-                                myConfiguration.FIXER_ACTION = GitFixerConfiguration.FIX_FILE_SYSTEM;
-                                updateCheckedState.run();
-                            });
+                    fixFileCase.addActionListener(e1 -> {
+                        myConfiguration.FIXER_ACTION = GitFixerConfiguration.FIX_FILE_SYSTEM;
+                        updateCheckedState.run();
+                    });
 
-                            fixGit.addActionListener(e1 -> {
-                                myConfiguration.FIXER_ACTION = GitFixerConfiguration.FIX_GIT;
-                                updateCheckedState.run();
-                            });
+                    fixGit.addActionListener(e1 -> {
+                        myConfiguration.FIXER_ACTION = GitFixerConfiguration.FIX_GIT;
+                        updateCheckedState.run();
+                    });
 
-                            myPopupMenuActions.show(linkLabel, mouseLinkPos.x, mouseLinkPos.y);
-                        }
-                    }
-                });
+                    myPopupMenuActions.show(fixLink, 10, fixLink.getWidth());
+                }, null);
 
                 return panel;
             }
