@@ -90,6 +90,7 @@ public class GitFileCaseFixerCheckinHandler extends CheckinHandler {
 
                 HyperlinkLabel linkLabel = new HyperlinkLabel("dummy", null);
                 linkLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
+                panel.add(linkLabel, BorderLayout.CENTER);
 
                 Runnable updateCheckBoxText = () -> {
                     String fileType = myConfiguration.CHECK_UNMODIFIED_FILES ? Bundle.message("git.filecase.check.type.unmodified") : Bundle.message("git.filecase.check.type.modified");
@@ -181,7 +182,6 @@ public class GitFileCaseFixerCheckinHandler extends CheckinHandler {
                     }
                 });
 
-                panel.add(linkLabel, BorderLayout.CENTER);
                 return panel;
             }
 

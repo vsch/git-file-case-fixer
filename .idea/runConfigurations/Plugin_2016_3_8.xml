@@ -1,9 +1,9 @@
 <component name="ProjectRunConfigurationManager">
-  <configuration default="false" name="Plugin" type="#org.jetbrains.idea.devkit.run.PluginConfigurationType" factoryName="Plugin">
+  <configuration default="false" name="Plugin 2016.3.8" type="#org.jetbrains.idea.devkit.run.PluginConfigurationType" factoryName="Plugin">
     <module name="git-file-case-fixer" />
     <option name="VM_PARAMETERS" value="-Xmx1024m -Xms512m -XX:MaxPermSize=500m -ea" />
     <option name="PROGRAM_PARAMETERS" value="" />
-    <alternative-path path="IDEA Plugin jdk MN" alternative-path-enabled="true" />
+    <alternative-path path="/Applications/IntelliJ IDEA 2016.3.8 CE.app/Contents" alternative-path-enabled="true" />
     <predefined_log_file id="idea.log" enabled="true" />
     <method />
   </configuration>

@@ -74,7 +74,7 @@ public class ShowGitFileCaseFixMismatchedAction extends AnAction implements Dumb
                 }
             } else {
                 // show popup that there are no mismatches
-                PopupUtil.showBalloonForComponent(WindowManager.getInstance().findVisibleFrame().getRootPane(), "No Mismatches between git and file system", MessageType.INFO, true, null);
+                PopupUtil.showBalloonForActiveComponent("No Mismatches between git and file system", MessageType.INFO);
                 //PopupUtil.showBalloonForActiveComponent("No Mismatched file case", MessageType.INFO);
             }
             projectRoots.clearCaches();

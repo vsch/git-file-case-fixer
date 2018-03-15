@@ -22,12 +22,17 @@
         ]]>
     </description>
 
-    <version>1.0.2</version>
+    <version>1.0.4</version>
 
     <idea-version since-build="163.15529"/>
 
     <change-notes><![CDATA[
         <div xmlns="http://www.w3.org/1999/html">
+            <h2>1.0.4</h2>
+            <ul>
+                <li>Fix: compatibility with 2016.3.8, some API uses were from later versions</li>
+                <li>Fix: no mismatches balloon popup would show in first project instead of the current one.</li>
+            </ul>
             <h2>1.0.2</h2>
             <ul>
                 <li>Fix: show mismatches action would not check files unless <code>check all files</code> was set in

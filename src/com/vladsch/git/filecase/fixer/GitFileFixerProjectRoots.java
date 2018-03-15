@@ -28,6 +28,7 @@ package com.vladsch.git.filecase.fixer;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.command.WriteCommandAction;
 import com.intellij.openapi.components.AbstractProjectComponent;
+import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.DumbAware;
 import com.intellij.openapi.project.Project;
@@ -71,6 +72,10 @@ public class GitFileFixerProjectRoots extends AbstractProjectComponent implement
         return project.getComponent(GitFileFixerProjectRoots.class);
     }
 
+    static Git getGitInstance(@NotNull Project project) {
+        return ServiceManager.getService(project, git4idea.commands.Git.class);
+    }
+
     @NotNull
     static Set<String> gitFiles(@NotNull Project project, @NotNull VirtualFile root) throws VcsException {
         GitLineHandler handler = new GitLineHandler(project, root, GitCommand.LS_FILES);
@@ -78,8 +83,7 @@ public class GitFileFixerProjectRoots extends AbstractProjectComponent implement
         //handler.addParameters("--ignored", "--others", "--exclude-standard");
         handler.endOptions();
         //handler.addParameters(paths);
-        String output = Git.getInstance().runCommand(handler).getOutputOrThrow();
-
+        String output = StringUtil.join(getGitInstance(project).runCommand(handler).getOutput(), "\n");
         Set<String> nonIgnoredFiles = new HashSet<>(Arrays.asList(StringUtil.splitByLines(output)));
         return nonIgnoredFiles;
     }
@@ -165,18 +169,20 @@ public class GitFileFixerProjectRoots extends AbstractProjectComponent implement
         }
 
         static void matchFileSystem(final GitRepoFiles gitRepo, final List<String> gitPaths, final List<String> filePaths) {
+            assert gitRepo.myProject != null;
+            assert gitRepo.myRepoRoot != null;
             GitLineHandler rmHandler = new GitLineHandler(gitRepo.myProject, gitRepo.myRepoRoot, GitCommand.RM);
             rmHandler.addParameters("--cached");
             rmHandler.endOptions();
             rmHandler.addParameters(gitPaths);
             try {
-                Git.getInstance().runCommand(rmHandler).getOutputOrThrow();
+                getGitInstance(gitRepo.myProject).runCommand(rmHandler).getOutput();
                 GitLineHandler addHandler = new GitLineHandler(gitRepo.myProject, gitRepo.myRepoRoot, GitCommand.ADD);
                 addHandler.addParameters("--ignore-errors");
                 addHandler.endOptions();
                 addHandler.addParameters(filePaths);
-                Git.getInstance().runCommand(addHandler).getOutputOrThrow();
-            } catch (VcsException e) {
+                getGitInstance(gitRepo.myProject).runCommand(addHandler).getOutput();
+            } catch (Exception e) {
                 e.printStackTrace();
             }
         }
@@ -193,6 +199,7 @@ public class GitFileFixerProjectRoots extends AbstractProjectComponent implement
         }
 
         static void matchGit(final GitRepoFiles gitRepo, final String filePath, final String gitPath, final String fullPath) {
+            assert gitRepo.myRepoRoot != null;
             VirtualFile file = gitRepo.myRepoRoot.findFileByRelativePath(filePath);
 
             if (file != null) {
@@ -274,7 +281,7 @@ public class GitFileFixerProjectRoots extends AbstractProjectComponent implement
 
         messageBus.subscribe(ProjectLevelVcsManager.VCS_CONFIGURATION_CHANGED, () -> {
             vcsRoots.clear();
-            List repositories = GitRepositoryManager.getInstance(myProject).getRepositories();
+            List repositories = ServiceManager.getService(myProject, GitRepositoryManager.class).getRepositories();
             for (Object repository : repositories) {
                 if (repository instanceof GitRepository) {
                     vcsRoots.add((GitRepository) repository);
