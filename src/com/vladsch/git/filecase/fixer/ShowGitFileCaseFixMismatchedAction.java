@@ -27,7 +27,6 @@ package com.vladsch.git.filecase.fixer;
 
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
-import com.intellij.openapi.actionSystem.PlatformDataKeys;
 import com.intellij.openapi.project.DumbAware;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.MessageType;
@@ -35,11 +34,7 @@ import com.intellij.openapi.ui.popup.util.PopupUtil;
 import com.intellij.openapi.wm.WindowManager;
 import com.vladsch.git.filecase.fixer.GitFileFixerProjectRoots.GitRepoFile;
 
-import javax.swing.JComponent;
-import java.awt.Component;
 import java.util.ArrayList;
-
-import static com.vladsch.git.filecase.fixer.GitFixerConfiguration.getInstance;
 
 public class ShowGitFileCaseFixMismatchedAction extends AnAction implements DumbAware {
     protected ShowGitFileCaseFixMismatchedAction() {
@@ -65,13 +60,11 @@ public class ShowGitFileCaseFixMismatchedAction extends AnAction implements Dumb
             projectRoots.clearCaches();
             ArrayList<GitRepoFile> mismatchedFiles = new ArrayList<>();
 
-            if (getInstance(project).CHECK_UNMODIFIED_FILES) {
-                projectRoots.visitAllIndexFiles((repoFile) -> {
-                    if (!repoFile.gitPath.equals(repoFile.filePath)) {
-                        mismatchedFiles.add(repoFile);
-                    }
-                });
-            }
+            projectRoots.visitAllIndexFiles((repoFile) -> {
+                if (!repoFile.gitPath.equals(repoFile.filePath)) {
+                    mismatchedFiles.add(repoFile);
+                }
+            });
 
             if (!mismatchedFiles.isEmpty()) {
                 GitFileCaseShowMismatchesDialog dialog = new GitFileCaseShowMismatchesDialog(WindowManager.getInstance().findVisibleFrame().getRootPane(), mismatchedFiles);

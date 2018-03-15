@@ -36,7 +36,10 @@ import com.vladsch.git.filecase.fixer.GitFileFixerProjectRoots.GitRepoFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.List;
 
 import static com.vladsch.git.filecase.fixer.GitFixerConfiguration.getInstance;
 

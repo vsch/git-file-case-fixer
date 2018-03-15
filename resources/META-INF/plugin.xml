@@ -30,7 +30,10 @@
         <div xmlns="http://www.w3.org/1999/html">
             <h2>1.0.2</h2>
             <ul>
+                <li>Fix: show mismatches action would not check files unless <code>check all files</code> was set in
+                    configuration</li>
                 <li>Fix: message for modified and unmodified found files.</li>
+                <li>Fix: vcs tool window icon</li>
             </ul>
             <h3>1.0.0</h3>
             <ul>

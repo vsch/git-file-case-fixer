@@ -33,7 +33,7 @@ If `fix:` action above is `Ask` and there are files with mismatched case in git:
 ![ScreenShot_CommitMismatchFound.png](assets/images/ScreenShot_CommitMismatchFound.png)  
 
 Via Review button above or from `Version Control` tool window button
-![Fixer_icon.png](resources/icons/Fixer_icon%402x.png):
+![Fixer_icon.png](resources/icons/Fixer_icon.png):
 
 ![ScreenShot_ShowMismatchesDialog.png](assets/images/ScreenShot_ShowMismatchesDialog.png)
 

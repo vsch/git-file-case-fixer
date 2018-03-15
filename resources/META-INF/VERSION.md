@@ -8,6 +8,8 @@
 
 ## 1.0.2
 
+* Fix: show mismatches action would not check files unless `check all files` was set in
+  configuration
 * Fix: message for modified and unmodified found files.
 * Fix: vcs tool window icon
 
