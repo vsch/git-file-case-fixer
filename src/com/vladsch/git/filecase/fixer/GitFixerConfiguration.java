@@ -41,7 +41,7 @@ public final class GitFixerConfiguration implements PersistentStateComponent<Git
 
     public int FIXER_ACTION = FIX_PROMPT;
     public boolean CHECK_FILE_CASE = true;
-    public boolean CHECK_UNMODIFIED_FILES = false;
+    public boolean CHECK_UNMODIFIED_FILES = true;
 
     @Override
     public GitFixerConfiguration getState() {

@@ -10,8 +10,12 @@
 
 ## Next: 1.0.6
 
-* [ ] Fix: handle parent directories' case mismatch in apply fixes. Right now fix git will work,
-      but fix file system will only work for case mismatch in the file name.
+* Fix: handle parent directories' case mismatch in apply fixes. Right now fix git will work, but
+  fix file system will only work for case mismatch in the file name.
+* Fix: files with mismatched case could be doubled in the preview git file case fixer dialog.
+* Fix: mark renamed files as vcs dirty so they get refreshed, otherwise they don't make it into
+  the next commit.
+* Fix: make default settings check unmodified files
 * Fix: improve text and link layout of check-in handler.
 * Fix: use LinkLabel for check-in handler options
 

@@ -34,6 +34,7 @@ import com.intellij.util.ui.*;
 import com.vladsch.git.filecase.fixer.GitFileFixerProjectRoots.GitRepoFile;
 import icons.PluginIcons;
 
+import javax.annotation.Nullable;
 import javax.swing.*;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableCellEditor;
@@ -45,13 +46,17 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+
+import static com.vladsch.git.filecase.fixer.GitFixerConfiguration.FIX_PROMPT;
 
 public class GitFileCaseShowMismatches {
     JPanel myMainPanel;
     ListTableModel<GitRepoFile> myRepoFilesModel;
     TableView<GitRepoFile> myRepoFilesTable;
     final Runnable myUpdateRunnable;
+    @Nullable HashMap<GitRepoFile, String> myDirectoryMismatches = null;
 
     static Color getInvalidTextFieldBackground() {
         return Utils.errorColor(UIUtil.getTextFieldBackground());
@@ -95,7 +100,40 @@ public class GitFileCaseShowMismatches {
         }
     }
 
+    /**
+     * Shortest case mismatch path which is shorter than full path
+     * @param file   git repo file
+     * @return String shortest case mismatch path or null
+     */
+    static @Nullable
+    String shortestCaseMismatchPath(GitRepoFile file) {
+        String[] parts1 = file.gitPath.split("/");
+        String[] parts2 = file.filePath.split("/");
+        int iMax = parts1.length;
+        StringBuilder sb = new StringBuilder();
+        String sep = "";
+        for (int i = 0; i < iMax - 1; i++) {
+            sb.append(sep).append(parts1[i].toLowerCase());
+            sep = "/";
+
+            if (!parts1[i].equals(parts2[i])) {
+                return sb.toString();
+            }
+        }
+        return null;
+    }
+
     public void setRepoFileList(List<GitRepoFile> repoFileList) {
+        // need to create a list of directory mismatches if the difference is in the path
+        myDirectoryMismatches = null;
+
+        for (GitRepoFile file : repoFileList) {
+            String mismatchPath = shortestCaseMismatchPath(file);
+            if (mismatchPath != null) {
+                if (myDirectoryMismatches == null) myDirectoryMismatches = new HashMap<>();
+                myDirectoryMismatches.put(file, mismatchPath);
+            }
+        }
         myRepoFilesModel.setItems(repoFileList);
     }
 
@@ -107,7 +145,7 @@ public class GitFileCaseShowMismatches {
                 , GridConstraints.SIZEPOLICY_CAN_GROW | GridConstraints.SIZEPOLICY_CAN_SHRINK
                 , null, null, null);
 
-        ColumnInfo[] linkTextColumns = { new GitPathColumn(), new FixColumn(), new FilePathColumn() };
+        ColumnInfo[] linkTextColumns = { new GitPathColumn(), new FixColumn(this), new FilePathColumn() };
         myRepoFilesModel = new ListTableModel<>(linkTextColumns, new ArrayList<>(), 0);
         myRepoFilesTable = new TableView<>(myRepoFilesModel);
         myRepoFilesTable.setPreferredScrollableViewportSize(JBUI.size(-1, -1));
@@ -131,11 +169,33 @@ public class GitFileCaseShowMismatches {
             PluginIcons.RightArrow,
     };
 
+    void updateFixAction(GitRepoFile repoFile, int action) {
+        String mismatchPath = myDirectoryMismatches != null ? myDirectoryMismatches.get(repoFile) : null;
+        if (mismatchPath != null) {
+            boolean hadChanges = false;
+            int iMax = myRepoFilesModel.getRowCount();
+            for (int i = 0; i < iMax; i++) {
+                GitRepoFile gitRepoFile = myRepoFilesModel.getItem(i);
+                String gitMismatchPath = myDirectoryMismatches.get(gitRepoFile);
+                if (mismatchPath.equals(gitMismatchPath)) {
+                    gitRepoFile.fixAction = action;
+                    hadChanges = true;
+                }
+            }
+
+            if (hadChanges) {
+                myRepoFilesModel.fireTableDataChanged();
+            }
+        }
+    }
+
     static class FixColumn extends MyColumnInfo<String> {
         public static final int ROW_HEIGHT_OFFSET = 2;
+        final GitFileCaseShowMismatches myMismatches;
 
-        FixColumn() {
+        public FixColumn(final GitFileCaseShowMismatches mismatches) {
             super(Bundle.message("show.mismatches.table-column.fix"));
+            myMismatches = mismatches;
         }
 
         public TableCellRenderer getRenderer(final GitRepoFile gitRepoFile) {
@@ -181,6 +241,13 @@ public class GitFileCaseShowMismatches {
                     myFixChooser.setOptions((Object[]) fixChoices);
                     myFixChooser.setDefaultValue(value);
                     myFixChooser.setToString(o -> (String) o);
+                    myFixChooser.addActionListener(e -> {
+                        // if the case diff is in the parent need to change all files in the parent to the same fix type
+                        int action = getAction((String) myFixChooser.getEditorValue());
+                        if (action != FIX_PROMPT) {
+                            myMismatches.updateFixAction(gitRepoFile, action);
+                        }
+                    });
                     return myFixChooser;
                 }
             };
@@ -192,8 +259,12 @@ public class GitFileCaseShowMismatches {
 
         public void setValue(final GitRepoFile item, final String choice) {
             if (item != null) {
-                item.fixAction = fixChoices[GitFixerConfiguration.FIX_FILE_SYSTEM].equals(choice) ? GitFixerConfiguration.FIX_FILE_SYSTEM : fixChoices[GitFixerConfiguration.FIX_GIT].equals(choice) ? GitFixerConfiguration.FIX_GIT : GitFixerConfiguration.FIX_PROMPT;
+                item.fixAction = getAction(choice);
             }
+        }
+
+        static int getAction(final String choice) {
+            return fixChoices[GitFixerConfiguration.FIX_FILE_SYSTEM].equals(choice) ? GitFixerConfiguration.FIX_FILE_SYSTEM : fixChoices[GitFixerConfiguration.FIX_GIT].equals(choice) ? GitFixerConfiguration.FIX_GIT : FIX_PROMPT;
         }
 
         @Override
@@ -219,7 +290,6 @@ public class GitFileCaseShowMismatches {
         public String valueOf(final GitRepoFile object) {
             return object.gitPath;
         }
-
     }
 
     static class FilePathColumn extends MyColumnInfo<String> {
@@ -290,6 +360,7 @@ public class GitFileCaseShowMismatches {
             return super.getToolTipText();
         }
     }
+
     private abstract static class MyColumnInfo<T> extends ColumnInfo<GitRepoFile, T> {
         protected Color myInvalidBackground = getInvalidTableBackground(false);
         protected Color myInvalidSelectedBackground = getInvalidTableBackground(true);

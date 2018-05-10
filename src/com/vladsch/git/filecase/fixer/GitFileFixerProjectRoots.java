@@ -36,6 +36,7 @@ import com.intellij.openapi.util.Comparing;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vcs.ProjectLevelVcsManager;
 import com.intellij.openapi.vcs.VcsException;
+import com.intellij.openapi.vcs.changes.VcsDirtyScopeManager;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.Consumer;
 import com.intellij.util.messages.MessageBusConnection;
@@ -93,7 +94,6 @@ public class GitFileFixerProjectRoots extends AbstractProjectComponent implement
             ApplicationManager.getApplication().runWriteAction(() -> {
                 for (GitRepoFile repoFile : fixFileCaseList) {
                     assert repoFile.gitRepo.myRepoRoot != null;
-                    GitRepoFile.matchGit(repoFile.gitRepo, repoFile.filePath, repoFile.gitPath, repoFile.fullPath);
                     repoFile.matchGit();
                 }
             });
@@ -198,24 +198,43 @@ public class GitFileFixerProjectRoots extends AbstractProjectComponent implement
             }
         }
 
+        static void fixFileCase(@Nullable VirtualFile file, @Nullable File path) throws IOException {
+            if (file != null && path != null) {
+                String filePath = file.getPath();
+                String pathPath = path.getPath();
+                if (filePath.toLowerCase().endsWith(pathPath.toLowerCase())) {
+                    filePath = filePath.substring(filePath.length()- pathPath.length());
+
+                    if (filePath.equalsIgnoreCase(pathPath) && !filePath.equals(pathPath)) {
+                        // rename file and possibly parent directories
+                        if (!file.getName().equals(path.getName())) {
+                            // rename file
+                            file.rename(file, path.getName());
+                        }
+
+                        fixFileCase(file.getParent(), path.getParentFile());
+                    }
+                }
+
+            }
+        }
+
         static void matchGit(final GitRepoFiles gitRepo, final String filePath, final String gitPath, final String fullPath) {
             assert gitRepo.myRepoRoot != null;
             VirtualFile file = gitRepo.myRepoRoot.findFileByRelativePath(filePath);
 
             if (file != null) {
                 try {
-                    new WriteCommandAction.Simple(gitRepo.myProject) {
-                        @Override
-                        protected void run() throws Throwable {
-                            // TODO: rename the parent directories that do not match also
-                            File gitFile = new File(gitPath);
-                            try {
-                                file.rename(this, gitFile.getName());
-                            } catch (IOException e) {
-                                e.printStackTrace();
-                            }
+                    WriteCommandAction.runWriteCommandAction(gitRepo.myProject, () -> {
+                        File gitFile = new File(gitPath);
+                        try {
+                            // rename the parent directories that do not match also
+                            fixFileCase(file, gitFile);
+                            VcsDirtyScopeManager.getInstance(gitRepo.myProject).fileDirty(file);
+                        } catch (IOException e) {
+                            e.printStackTrace();
                         }
-                    }.run();
+                    });
                 } catch (Throwable throwable) {
                     throwable.printStackTrace();
                 }

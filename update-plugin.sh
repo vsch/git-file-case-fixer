@@ -18,16 +18,4 @@ function UpdProduct() {
     done
 }
 
-#UpdJar CodeGlance "IdeaIC16" "IntelliJIdea16" "IdeaIC15" "IntelliJIdea15" "RubyMine80" "PyCharm40" "PyCharm50" "Webide100" "Webide110"
-#UpdZip CodeGlance "IdeaIC16" "IntelliJIdea16" "IdeaIC15" "IntelliJIdea15" "RubyMine80" "PyCharm40" "PyCharm50" "Webide100" "Webide110"
-UpdProduct "IdeaIC2018-1-EAP" "IdeaIC2017-3" "IdeaIC2017.3" "IdeaIC2018.1" "IntelliJIdea2017.3" "IntelliJIdea2018.1" "PhpStorm2017.3" "PhpStorm2018.1" "WebStorm2017.3" "WebStorm2018.1" "CLion2017.3" "CLion2018.1"
-
-# Update Intellij Community build/debug
-#PRODUCT=/Users/vlad/src/intellij-community/config/plugins
-#if [ -d ${PRODUCT} ]; then
-#    echo updating ${PRODUCT} for latest idea-multimarkdown
-#    rm -fr "${PRODUCT}"/idea-multimarkdown
-#    unzip -bq ../idea-multimarkdown.zip -d "${PRODUCT}"
-#else
-#    echo product ${PRODUCT} does not exist
-#fi
+UpdProduct "IdeaIC2018-1-EAP" "IdeaIC2017.3" "IdeaIC2018.1" "IntelliJIdea2018.1" "PhpStorm2018.1" "WebStorm2018.1" "CLion2018.1"

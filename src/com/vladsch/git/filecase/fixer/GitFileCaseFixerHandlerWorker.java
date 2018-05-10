@@ -70,10 +70,10 @@ public class GitFileCaseFixerHandlerWorker {
             if (change.getAfterRevision() == null) continue;
             FilePath afterFilePath = change.getAfterRevision().getFile();
 
-            checkedFiles.add(afterFilePath.getPath());
-
             final VirtualFile afterFile = getFileWithRefresh(afterFilePath);
             if (afterFile != null && !afterFile.isDirectory()) {
+                checkedFiles.add(afterFile.getPath());
+
                 // check for file case
                 GitRepoFile repoFile = projectRoots.getGitRepoFile(afterFile);
                 if (repoFile != null && !repoFile.filePath.equals(repoFile.gitPath)) {

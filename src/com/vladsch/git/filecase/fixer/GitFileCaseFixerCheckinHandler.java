@@ -25,6 +25,7 @@
 
 package com.vladsch.git.filecase.fixer;
 
+import com.intellij.dvcs.repo.VcsRepositoryManager;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.progress.Task;
@@ -36,12 +37,14 @@ import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vcs.CheckinProjectPanel;
 import com.intellij.openapi.vcs.changes.Change;
+import com.intellij.openapi.vcs.changes.ChangesViewManager;
 import com.intellij.openapi.vcs.changes.CommitExecutor;
 import com.intellij.openapi.vcs.checkin.CheckinHandler;
+import com.intellij.openapi.vcs.ex.ProjectLevelVcsManagerEx;
+import com.intellij.openapi.vcs.impl.ProjectLevelVcsManagerImpl;
 import com.intellij.openapi.vcs.ui.RefreshableOnComponent;
+import com.intellij.openapi.vfs.VirtualFileManager;
 import com.intellij.openapi.wm.WindowManager;
-import com.intellij.ui.HyperlinkLabel;
-import com.intellij.ui.JBColor;
 import com.intellij.ui.components.labels.LinkLabel;
 import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
@@ -52,15 +55,14 @@ import com.vladsch.git.filecase.fixer.GitFileFixerProjectRoots.GitRepoFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.rmi.CORBA.Util;
 import javax.swing.JCheckBox;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.event.HyperlinkEvent;
-import java.awt.*;
+import java.awt.BorderLayout;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
 
 import static com.intellij.CommonBundle.getCancelButtonText;
 import static com.intellij.openapi.ui.Messages.*;
@@ -160,24 +162,24 @@ public class GitFileCaseFixerCheckinHandler extends CheckinHandler {
 
                 fixLink.setListener((aSource, aLinkData) -> {
                     JBPopupMenu myPopupMenuActions = new JBPopupMenu();
-                    final JBCheckboxMenuItem prompt = new JBCheckboxMenuItem(Bundle.message("git.filecase.fixer.name.menu.prompt"));
+                    final JBCheckboxMenuItem fixAsk = new JBCheckboxMenuItem(Bundle.message("git.filecase.fixer.name.menu.prompt"));
                     final JBCheckboxMenuItem fixFileCase = new JBCheckboxMenuItem(Bundle.message("git.filecase.fixer.name.menu.file-system"));
                     final JBCheckboxMenuItem fixGit = new JBCheckboxMenuItem(Bundle.message("git.filecase.fixer.name.menu.git"));
 
-                    myPopupMenuActions.add(prompt);
+                    myPopupMenuActions.add(fixAsk);
                     myPopupMenuActions.add(fixFileCase);
                     myPopupMenuActions.add(fixGit);
 
                     Runnable updateCheckedState = () -> {
                         updateCheckBoxText.run();
-                        prompt.setSelected(myConfiguration.FIXER_ACTION == FIX_PROMPT);
+                        fixAsk.setSelected(myConfiguration.FIXER_ACTION == FIX_PROMPT);
                         fixFileCase.setSelected(myConfiguration.FIXER_ACTION == GitFixerConfiguration.FIX_FILE_SYSTEM);
                         fixGit.setSelected(myConfiguration.FIXER_ACTION == GitFixerConfiguration.FIX_GIT);
                     };
 
                     updateCheckedState.run();
 
-                    prompt.addActionListener(e1 -> {
+                    fixAsk.addActionListener(e1 -> {
                         myConfiguration.FIXER_ACTION = FIX_PROMPT;
                         updateCheckedState.run();
                     });

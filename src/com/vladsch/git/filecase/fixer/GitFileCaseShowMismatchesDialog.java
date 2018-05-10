@@ -26,8 +26,11 @@
 package com.vladsch.git.filecase.fixer;
 
 import com.intellij.openapi.diagnostic.Logger;
+import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.openapi.ui.ValidationInfo;
+import com.intellij.openapi.vcs.changes.ChangesViewManager;
+import com.intellij.openapi.vfs.VirtualFileManager;
 import com.vladsch.git.filecase.fixer.GitFileFixerProjectRoots.GitRepoFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -126,11 +129,14 @@ public class GitFileCaseShowMismatchesDialog extends DialogWrapper {
         List<GitRepoFile> allRepoFiles = myShowMatchesForm.getRepoFileList();
         ArrayList<GitRepoFile> fixGitList = new ArrayList<>();
         ArrayList<GitRepoFile> fixFileCaseList = new ArrayList<>();
+        Project project = null;
 
         for (GitRepoFile repoFile : allRepoFiles) {
             if (repoFile.fixAction == FIX_FILE_SYSTEM) {
+                project = repoFile.gitRepo.myProject;
                 fixFileCaseList.add(repoFile);
             } else if (repoFile.fixAction == FIX_GIT) {
+                project = repoFile.gitRepo.myProject;
                 fixGitList.add(repoFile);
             }
         }
@@ -142,6 +148,13 @@ public class GitFileCaseShowMismatchesDialog extends DialogWrapper {
         if (!fixFileCaseList.isEmpty()) {
             // rename file
             GitFileFixerProjectRoots.fixFileSystemCase(fixFileCaseList);
+        }
+
+        if (project != null) {
+            Project finalProject = project;
+            VirtualFileManager.getInstance().asyncRefresh(() -> {
+                ChangesViewManager.getInstance(finalProject).scheduleRefresh();
+            });
         }
     }
 
