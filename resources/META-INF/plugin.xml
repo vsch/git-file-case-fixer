@@ -28,6 +28,17 @@
 
     <change-notes><![CDATA[
         <div xmlns="http://www.w3.org/1999/html">
+            <h2>Next: 1.0.6</h2>
+            <ul>
+                <li>Fix: handle parent directories&rsquo; case mismatch in apply fixes. Right now fix git will work, but
+                    fix file system will only work for case mismatch in the file name.</li>
+                <li>Fix: files with mismatched case could be doubled in the preview git file case fixer dialog.</li>
+                <li>Fix: mark renamed files as vcs dirty so they get refreshed, otherwise they don&rsquo;t make it into
+                    the next commit.</li>
+                <li>Fix: make default settings check unmodified files</li>
+                <li>Fix: improve text and link layout of check-in handler.</li>
+                <li>Fix: use LinkLabel for check-in handler options</li>
+            </ul>
             <h2>1.0.4</h2>
             <ul>
                 <li>Fix: compatibility with 2016.3.8, some API uses were from later versions</li>
