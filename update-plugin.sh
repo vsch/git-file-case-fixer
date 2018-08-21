@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-HOME_DIR="/Users/vlad/src/git-file-case-fixer"
+HOME_DIR="/Users/vlad/src/projects/git-file-case-fixer"
 PLUGIN="git-file-case-fixer"
 
 cd ${HOME_DIR}

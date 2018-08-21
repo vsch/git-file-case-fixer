@@ -4,7 +4,9 @@
 
 Download it from the IDE or https://plugins.jetbrains.com/plugin/10533-git-file-case-fixer
 
-Detects and optionally fixes file case mismatch between git and the file system
+If you are working with case-insensitive file system then case mismatches can arise if the file
+case is modified outside the IDE. This plugin detects and optionally fixes file case mismatch
+between git and the file system.
 
 Adds **Before Commit** check for file case mismatches between git and the file system
 with corrective actions:

@@ -27,7 +27,7 @@ package com.vladsch.git.filecase.fixer;
 
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.command.WriteCommandAction;
-import com.intellij.openapi.components.AbstractProjectComponent;
+import com.intellij.openapi.components.ProjectComponent;
 import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.DumbAware;
@@ -55,7 +55,7 @@ import java.util.*;
 
 import static com.intellij.vcsUtil.VcsFileUtil.FILE_PATH_LIMIT;
 
-public class GitFileFixerProjectRoots extends AbstractProjectComponent implements DumbAware {
+public class GitFileFixerProjectRoots implements ProjectComponent, DumbAware {
     @NotNull final ProjectLevelVcsManager projectLevelVcsManager;
     @NotNull final static GitRepoFiles NULL_GIT_REPO_FILES = new GitRepoFiles();
 
@@ -63,6 +63,7 @@ public class GitFileFixerProjectRoots extends AbstractProjectComponent implement
 
     @Nullable
     private MessageBusConnection messageBus;
+    final private Project myProject;
 
     @NotNull Collection<GitRepository> vcsRoots = new ArrayList<>();
     @NotNull ArrayList<GitRepoFiles> vcsGitFilesList = new ArrayList<>();
@@ -285,7 +286,7 @@ public class GitFileFixerProjectRoots extends AbstractProjectComponent implement
     }
 
     public GitFileFixerProjectRoots(@NotNull final Project project) {
-        super(project);
+        this.myProject = project;
         this.projectLevelVcsManager = ProjectLevelVcsManager.getInstance(project);
     }
 
@@ -403,7 +404,7 @@ public class GitFileFixerProjectRoots extends AbstractProjectComponent implement
 
     @Override
     public void disposeComponent() {
-        super.disposeComponent();
+
     }
 
     /**

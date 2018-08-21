@@ -22,16 +22,16 @@
         ]]>
     </description>
 
-    <version>1.0.5</version>
+    <version>1.0.6</version>
 
     <idea-version since-build="163.15529"/>
 
     <change-notes><![CDATA[
         <div xmlns="http://www.w3.org/1999/html">
-            <h2>Next: 1.0.6</h2>
+            <h2>1.0.6</h2>
             <ul>
-                <li>Fix: handle parent directories&rsquo; case mismatch in apply fixes. Right now fix git will work, but
-                    fix file system will only work for case mismatch in the file name.</li>
+                <li>Fix: handle parent directories&rsquo; case mismatch in apply fixes. Previously fix git worked, but
+                    fix file system only worked for case mismatch in the file name.</li>
                 <li>Fix: files with mismatched case could be doubled in the preview git file case fixer dialog.</li>
                 <li>Fix: mark renamed files as vcs dirty so they get refreshed, otherwise they don&rsquo;t make it into
                     the next commit.</li>

@@ -2,16 +2,16 @@
 
 [TOC]: # " "
 
-- [Next: 1.0.6](#next-106)
+- [1.0.6](#106)
 - [1.0.4](#104)
 - [1.0.2](#102)
 - [1.0.0](#100)
 - [0.0.0](#000)
 
-## Next: 1.0.6
+## 1.0.6
 
-* Fix: handle parent directories' case mismatch in apply fixes. Right now fix git will work, but
-  fix file system will only work for case mismatch in the file name.
+* Fix: handle parent directories' case mismatch in apply fixes. Previously fix git worked, but
+  fix file system only worked for case mismatch in the file name.
 * Fix: files with mismatched case could be doubled in the preview git file case fixer dialog.
 * Fix: mark renamed files as vcs dirty so they get refreshed, otherwise they don't make it into
   the next commit.
