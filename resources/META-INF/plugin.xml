@@ -22,12 +22,16 @@
         ]]>
     </description>
 
-    <version>1.0.6</version>
+    <version>1.0.8</version>
 
     <idea-version since-build="163.15529"/>
 
     <change-notes><![CDATA[
         <div xmlns="http://www.w3.org/1999/html">
+            <h2>1.0.8</h2>
+            <ul>
+                <li>Fix: 2016.3 compatibility</li>
+            </ul>
             <h2>1.0.6</h2>
             <ul>
                 <li>Fix: handle parent directories&rsquo; case mismatch in apply fixes. Previously fix git worked, but

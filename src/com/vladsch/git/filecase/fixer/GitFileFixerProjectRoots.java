@@ -78,6 +78,11 @@ public class GitFileFixerProjectRoots implements ProjectComponent, DumbAware {
         return ServiceManager.getService(project, git4idea.commands.Git.class);
     }
 
+    @Override
+    public void initComponent() {
+
+    }
+
     @NotNull
     static Set<String> gitFiles(@NotNull Project project, @NotNull VirtualFile root) throws VcsException {
         GitLineHandler handler = new GitLineHandler(project, root, GitCommand.LS_FILES);
