@@ -22,12 +22,16 @@
         ]]>
     </description>
 
-    <version>1.0.8</version>
+    <version>1.0.10</version>
 
     <idea-version since-build="163.15529"/>
 
     <change-notes><![CDATA[
         <div xmlns="http://www.w3.org/1999/html">
+            <h2>1.0.10</h2>
+            <ul>
+                <li>Fix: catch virtual file exception and skip testing path</li>
+            </ul>
             <h2>1.0.8</h2>
             <ul>
                 <li>Fix: 2016.3 compatibility</li>
@@ -72,7 +76,8 @@
     <actions>
         <!-- Add action to version control tool window toolbar -->
         <action id="GitFileCaseFixer.ShowMismatches" class="com.vladsch.git.filecase.fixer.ShowGitFileCaseFixMismatchedAction" popup="false"
-                text="Show git file case mismatches" description="Show all files where git file case does not match the file system file case"
+                text="Show git file case mismatches"
+                description="Show all files where git file case does not match the file system file case"
                 icon="PluginIcons.FixerIcon">
             <add-to-group group-id="ChangesViewToolbar" anchor="last"/>
         </action>

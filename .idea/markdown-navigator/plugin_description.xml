@@ -49,14 +49,16 @@
           <option name="GITLAB_EXT" value="false" />
           <option name="GITLAB_MATH_EXT" value="false" />
           <option name="GITLAB_MERMAID_EXT" value="false" />
+          <option name="HEADER_ID_NON_ASCII_TO_LOWERCASE" value="false" />
           <option name="HEADER_ID_NO_DUPED_DASHES" value="true" />
           <option name="JEKYLL_FRONT_MATTER" value="true" />
+          <option name="MACROS_EXT" value="false" />
           <option name="NO_TEXT_ATTRIBUTES" value="false" />
           <option name="PARSE_HTML_ANCHOR_ID" value="false" />
           <option name="SIM_TOC_BLANK_LINE_SPACER" value="true" />
         </ParserOptions>
       </ParserSettings>
-      <HtmlSettings headerTopEnabled="false" headerBottomEnabled="false" bodyTopEnabled="false" bodyBottomEnabled="false" embedUrlContent="false" addPageHeader="false" embedImages="false" embedHttpImages="false" imageUriSerials="true" addDocTypeHtml="true">
+      <HtmlSettings headerTopEnabled="false" headerBottomEnabled="false" bodyTopEnabled="false" bodyBottomEnabled="false" embedUrlContent="false" addPageHeader="false" embedImages="false" embedHttpImages="false" imageUriSerials="true" addDocTypeHtml="true" noParaTags="false">
         <GeneratorProvider>
           <provider providerId="com.vladsch.idea.multimarkdown.editor.javafx.html.generator" providerName="JavaFx HTML Generator" />
         </GeneratorProvider>
@@ -101,7 +103,7 @@ code {
 }</cssText>
         <cssUriHistory />
       </CssSettings>
-      <HtmlExportSettings updateOnSave="true" parentDir="$ProjectFileDir$/resources/META-INF" targetDir="$ProjectFileDir$/resources/META-INF" cssDir="$ProjectFileDir$/resources/META-INF/css" scriptDir="$ProjectFileDir$/resources/META-INF/js" plainHtml="true" imageDir="$ProjectFileDir$/resources/META-INF/img" copyLinkedImages="false" imageUniquifyType="0" targetExt="" useTargetExt="false" noCssNoScripts="true" linkToExportedHtml="false" exportOnSettingsChange="true" regenerateOnProjectOpen="false" linkFormatType="HTTP_ABSOLUTE" />
+      <HtmlExportSettings updateOnSave="true" parentDir="$ProjectFileDir$/resources/META-INF" targetDir="$ProjectFileDir$/resources/META-INF" cssDir="$ProjectFileDir$/resources/META-INF/css" scriptDir="$ProjectFileDir$/resources/META-INF/js" plainHtml="true" imageDir="$ProjectFileDir$/resources/META-INF/img" copyLinkedImages="false" imageUniquifyType="0" targetPathType="2" targetExt="" useTargetExt="false" noCssNoScripts="true" useElementStyleAttribute="false" linkToExportedHtml="false" exportOnSettingsChange="true" regenerateOnProjectOpen="false" linkFormatType="HTTP_ABSOLUTE" />
       <LinkMapSettings>
         <textMaps />
       </LinkMapSettings>

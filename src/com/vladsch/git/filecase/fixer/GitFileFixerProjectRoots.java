@@ -37,6 +37,7 @@ import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vcs.ProjectLevelVcsManager;
 import com.intellij.openapi.vcs.VcsException;
 import com.intellij.openapi.vcs.changes.VcsDirtyScopeManager;
+import com.intellij.openapi.vfs.InvalidVirtualFileAccessException;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.Consumer;
 import com.intellij.util.messages.MessageBusConnection;
@@ -328,11 +329,15 @@ public class GitFileFixerProjectRoots implements ProjectComponent, DumbAware {
             String rootPrefix = repoFiles.myRepoPrefix;
 
             for (String gitPath : repoFiles.myIndexFiles.values()) {
-                VirtualFile virtualFile = rootDir.findFileByRelativePath(gitPath);
-                if (virtualFile != null) {
-                    String fullPath = virtualFile.getPath();
-                    String filePath = fullPath.substring(rootPrefix.length());
-                    fileVisitor.consume(new GitRepoFile(repoFiles, fullPath, gitPath, filePath));
+                try {
+                    VirtualFile virtualFile = rootDir.findFileByRelativePath(gitPath);
+                    if (virtualFile != null) {
+                        String fullPath = virtualFile.getPath();
+                        String filePath = fullPath.substring(rootPrefix.length());
+                        fileVisitor.consume(new GitRepoFile(repoFiles, fullPath, gitPath, filePath));
+                    }
+                } catch (InvalidVirtualFileAccessException e) {
+                    //e.printStackTrace();
                 }
             }
         }
