@@ -22,12 +22,16 @@
         ]]>
     </description>
 
-    <version>1.0.10</version>
+    <version>1.0.12</version>
 
     <idea-version since-build="163.15529"/>
 
     <change-notes><![CDATA[
         <div xmlns="http://www.w3.org/1999/html">
+            <h2>1.0.12</h2>
+            <ul>
+                <li>Add: plugin icon</li>
+            </ul>
             <h2>1.0.10</h2>
             <ul>
                 <li>Fix: catch virtual file exception and skip testing path</li>
