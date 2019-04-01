@@ -1,8 +1,8 @@
-# ![Fixer_icon@2x.png](resources/icons/Fixer_icon%402x.png) Git File Case Fixer Plugin
+# ![Fixer_icon@2x.png](resources/icons/Fixer_icon%402x.png) Git File Case Fixer
 
 **<span style="color:#30A0D8;">Git file case mismatch fixer plugin</span> for JetBrains IDEs**
 
-Download it from the IDE or https://plugins.jetbrains.com/plugin/10533-git-file-case-fixer
+Download it from the IDE or <https://plugins.jetbrains.com/plugin/10533-git-file-case-fixer>
 
 If you are working with case-insensitive file system then case mismatches can arise if the file
 case is modified outside the IDE. This plugin detects and optionally fixes file case mismatch

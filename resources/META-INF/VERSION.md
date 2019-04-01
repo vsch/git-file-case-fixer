@@ -2,6 +2,7 @@
 
 [TOC]: # " "
 
+- [1.0.14](#1014)
 - [1.0.12](#1012)
 - [1.0.10](#1010)
 - [1.0.8](#108)
@@ -11,19 +12,24 @@
 - [1.0.0](#100)
 - [0.0.0](#000)
 
-## 1.0.12
+### 1.0.14
+
+* Add: `resources/search/searchableOptions.xml` for full text search across all
+  configuration settings.
+
+### 1.0.12
 
 * Add: plugin icon
 
-## 1.0.10
+### 1.0.10
 
 * Fix: catch virtual file exception and skip testing path
 
-## 1.0.8
+### 1.0.8
 
 * Fix: 2016.3 compatibility
 
-## 1.0.6
+### 1.0.6
 
 * Fix: handle parent directories' case mismatch in apply fixes. Previously fix git worked, but
   fix file system only worked for case mismatch in the file name.
@@ -34,23 +40,23 @@
 * Fix: improve text and link layout of check-in handler.
 * Fix: use LinkLabel for check-in handler options
 
-## 1.0.4
+### 1.0.4
 
 * Fix: compatibility with 2016.3.8, some API uses were from later versions
 * Fix: no mismatches balloon popup would show in first project instead of the current one.
 
-## 1.0.2
+### 1.0.2
 
 * Fix: show mismatches action would not check files unless `check all files` was set in
   configuration
 * Fix: message for modified and unmodified found files.
 * Fix: vcs tool window icon
 
-## 1.0.0
+### 1.0.0
 
 * Initial release
 
-## 0.0.0
+### 0.0.0
 
 * first commit
 

@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<options>
+  <configurable id="preferences.keymap" configurable_name="Keymap">
+    <option name="all" path="ActionManager" hit="Show all files where git file case does not match the file system file case" />
+    <option name="case" path="ActionManager" hit="Show all files where git file case does not match the file system file case" />
+    <option name="does" path="ActionManager" hit="Show all files where git file case does not match the file system file case" />
+    <option name="file" path="ActionManager" hit="Show all files where git file case does not match the file system file case" />
+    <option name="files" path="ActionManager" hit="Show all files where git file case does not match the file system file case" />
+    <option name="git" path="ActionManager" hit="Show all files where git file case does not match the file system file case" />
+    <option name="match" path="ActionManager" hit="Show all files where git file case does not match the file system file case" />
+    <option name="not" path="ActionManager" hit="Show all files where git file case does not match the file system file case" />
+    <option name="show" path="ActionManager" hit="Show all files where git file case does not match the file system file case" />
+    <option name="system" path="ActionManager" hit="Show all files where git file case does not match the file system file case" />
+    <option name="the" path="ActionManager" hit="Show all files where git file case does not match the file system file case" />
+    <option name="where" path="ActionManager" hit="Show all files where git file case does not match the file system file case" />
+    <option name="case" path="ActionManager" hit="Show git file case mismatches" />
+    <option name="file" path="ActionManager" hit="Show git file case mismatches" />
+    <option name="git" path="ActionManager" hit="Show git file case mismatches" />
+    <option name="mismatches" path="ActionManager" hit="Show git file case mismatches" />
+    <option name="show" path="ActionManager" hit="Show git file case mismatches" />
+  </configurable>
+</options>
+
