@@ -75,8 +75,8 @@ public class GitFileFixerProjectRoots implements ProjectComponent, DumbAware {
         return project.getComponent(GitFileFixerProjectRoots.class);
     }
 
-    static Git getGitInstance(@NotNull Project project) {
-        return ServiceManager.getService(project, git4idea.commands.Git.class);
+    static Git getGitInstance() {
+        return ServiceManager.getService(git4idea.commands.Git.class);
     }
 
     @Override
@@ -91,7 +91,7 @@ public class GitFileFixerProjectRoots implements ProjectComponent, DumbAware {
         //handler.addParameters("--ignored", "--others", "--exclude-standard");
         handler.endOptions();
         //handler.addParameters(paths);
-        String output = StringUtil.join(getGitInstance(project).runCommand(handler).getOutput(), "\n");
+        String output = StringUtil.join(getGitInstance().runCommand(handler).getOutput(), "\n");
         Set<String> nonIgnoredFiles = new HashSet<>(Arrays.asList(StringUtil.splitByLines(output)));
         return nonIgnoredFiles;
     }
@@ -183,12 +183,12 @@ public class GitFileFixerProjectRoots implements ProjectComponent, DumbAware {
             rmHandler.endOptions();
             rmHandler.addParameters(gitPaths);
             try {
-                getGitInstance(gitRepo.myProject).runCommand(rmHandler).getOutput();
+                getGitInstance().runCommand(rmHandler).getOutput();
                 GitLineHandler addHandler = new GitLineHandler(gitRepo.myProject, gitRepo.myRepoRoot, GitCommand.ADD);
                 addHandler.addParameters("--ignore-errors");
                 addHandler.endOptions();
                 addHandler.addParameters(filePaths);
-                getGitInstance(gitRepo.myProject).runCommand(addHandler).getOutput();
+                getGitInstance().runCommand(addHandler).getOutput();
             } catch (Exception e) {
                 e.printStackTrace();
             }

@@ -4,7 +4,7 @@
     <vendor url="http://github.com/vsch" email="vladimir.schneider@gmail.com">Vladimir Schneider</vendor>
     <category>VCS integration</category>
     <depends>com.intellij.modules.lang</depends>
-    <depends optional="false">Git4Idea</depends>
+    <depends>Git4Idea</depends>
 
     <description><![CDATA[
         <div xmlns="http://www.w3.org/1999/html">
@@ -22,12 +22,16 @@
         ]]>
     </description>
 
-    <version>1.0.14</version>
+    <version>1.0.16</version>
 
     <idea-version since-build="163.15529"/>
 
     <change-notes><![CDATA[
         <div xmlns="http://www.w3.org/1999/html">
+            <h3>1.0.16</h3>
+            <ul>
+                <li>Fix: git requested as project instead of application service</li>
+            </ul>
             <h3>1.0.14</h3>
             <ul>
                 <li>Add: <code>resources/search/searchableOptions.xml</code> for full text search across all
