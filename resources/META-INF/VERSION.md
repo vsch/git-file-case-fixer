@@ -2,6 +2,8 @@
 
 [TOC]: # " "
 
+- [1.0.19](#1019)
+- [1.0.17](#1017)
 - [1.0.16](#1016)
 - [1.0.14](#1014)
 - [1.0.12](#1012)
@@ -12,6 +14,15 @@
 - [1.0.2](#102)
 - [1.0.0](#100)
 - [0.0.0](#000)
+
+### 1.0.19
+
+* [ ] Add: add options to `Version Control` > `Commit Dialog` before commit options.
+
+### 1.0.17
+
+* Fix: If an invalid vcs root exists and is in a subdirectory which was removed, would cause
+  string index out of bounds.
 
 ### 1.0.16
 

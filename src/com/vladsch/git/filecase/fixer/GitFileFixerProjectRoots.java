@@ -52,7 +52,15 @@ import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import static com.intellij.vcsUtil.VcsFileUtil.FILE_PATH_LIMIT;
 
@@ -210,7 +218,7 @@ public class GitFileFixerProjectRoots implements ProjectComponent, DumbAware {
                 String filePath = file.getPath();
                 String pathPath = path.getPath();
                 if (filePath.toLowerCase().endsWith(pathPath.toLowerCase())) {
-                    filePath = filePath.substring(filePath.length()- pathPath.length());
+                    filePath = filePath.substring(filePath.length() - pathPath.length());
 
                     if (filePath.equalsIgnoreCase(pathPath) && !filePath.equals(pathPath)) {
                         // rename file and possibly parent directories
@@ -222,7 +230,6 @@ public class GitFileFixerProjectRoots implements ProjectComponent, DumbAware {
                         fixFileCase(file.getParent(), path.getParentFile());
                     }
                 }
-
             }
         }
 
@@ -333,8 +340,12 @@ public class GitFileFixerProjectRoots implements ProjectComponent, DumbAware {
                     VirtualFile virtualFile = rootDir.findFileByRelativePath(gitPath);
                     if (virtualFile != null) {
                         String fullPath = virtualFile.getPath();
-                        String filePath = fullPath.substring(rootPrefix.length());
-                        fileVisitor.consume(new GitRepoFile(repoFiles, fullPath, gitPath, filePath));
+                        if (fullPath.length() >= rootPrefix.length()) {
+                            String filePath = fullPath.substring(rootPrefix.length());
+                            fileVisitor.consume(new GitRepoFile(repoFiles, fullPath, gitPath, filePath));
+                        } else {
+                            int tmp = 0;
+                        }
                     }
                 } catch (InvalidVirtualFileAccessException e) {
                     //e.printStackTrace();

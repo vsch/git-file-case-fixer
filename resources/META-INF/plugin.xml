@@ -22,9 +22,9 @@
         ]]>
     </description>
 
-    <version>1.0.16</version>
+    <version>1.0.17</version>
 
-    <idea-version since-build="163.15529"/>
+    <idea-version since-build="193"/>
 
     <change-notes><![CDATA[
         <div xmlns="http://www.w3.org/1999/html">
