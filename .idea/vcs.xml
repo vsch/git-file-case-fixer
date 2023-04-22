@@ -9,5 +9,6 @@
   </component>
   <component name="VcsDirectoryMappings">
     <mapping directory="" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/git-file-case-fixer-assets" vcs="Git" />
   </component>
 </project>

@@ -1,14 +1,14 @@
 #!/usr/bin/env bash
-VERSION="1.0.17"
+VERSION="1.0.19"
 PLUGIN="git-file-case-fixer"
 HOME_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 OLD_PLUGIN=
 IDE_LIST=(
 #    191
 #    192
-    193
-    201
-    202
+#    193
+#    201
+#    202
     203
     211
     212

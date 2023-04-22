@@ -11,14 +11,14 @@
 - [1.0.8](#108)
 - [1.0.6](#106)
 - [1.0.4](#104)
-- [1.0.19](#1019-1)
 - [1.0.2](#102)
 - [1.0.0](#100)
 - [0.0.0](#000)
 
 ### 1.0.19
 
-* [ ] Add: add options to `Version Control` > `Commit Dialog` before commit options.
+* [ ] Fix: add options to `Version Control` > `Commit Dialog` before commit options.
+* Fix: assertion for not starting git server from Dispatch thread.
 
 ### 1.0.17
 
@@ -62,10 +62,6 @@
 * Fix: compatibility with 2016.3.8, some API uses were from later versions
 * Fix: no mismatches balloon popup would show in first project instead of the current one.
 
-### 1.0.19
-
-* Fix: assertion for not starting git server from Dispatch thread.
-
 ### 1.0.2
 
 * Fix: show mismatches action would not check files unless `check all files` was set in
@@ -81,4 +77,4 @@
 
 * first commit
 
-![ScreenShot_CommitDialog.png](../../assets/images/ScreenShot_CommitDialog.png)
+![ScreenShot_CommitDialog.png](assets/images/ScreenShot_CommitDialog.png)
