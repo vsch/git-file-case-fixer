@@ -5,3 +5,5 @@
 /out/
 /.idea/dbnavigator.xml
 /git-file-case-fixer.jar
+/build/
+/.gradle/
