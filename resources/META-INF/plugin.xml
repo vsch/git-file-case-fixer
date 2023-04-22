@@ -22,13 +22,18 @@
         ]]>
     </description>
 
-    <version>1.0.17</version>
-    <idea-version since-build="193"/>
+    <version>1.0.20</version>
+    <idea-version since-build="203"/>
 
     <change-notes><![CDATA[
         <div xmlns="http://www.w3.org/1999/html">
-            <h3>1.0.19</h3>
+            <h3>1.0.20 (2023-04-22)</h3>
             <ul>
+                <li>Change: since build to 203.*</li>
+                <li>Fix: deprecated API usage, where possible without breaking compatibility with older IDEs.</li>
+                <li>Fix: add options to <code>Version Control</code> &gt; <code>Commit</code> before commit options.</li>
+                <li>Fix: migrate to gradle build system.</li>
+                <li>Fix: assertion for not starting git server from Dispatch thread.</li>
                 <li>Fix: If an invalid vcs root exists and is in a subdirectory which was removed, would cause
                     string index out of bounds.</li>
             </ul>
@@ -58,7 +63,7 @@
                 <li>Fix: handle parent directories&rsquo; case mismatch in apply fixes. Previously fix git worked, but
                     fix file system only worked for case mismatch in the file name.</li>
                 <li>Fix: files with mismatched case could be doubled in the preview git file case fixer dialog.</li>
-                <li>Fix: mark renamed files as vcs dirty so they get refreshed, otherwise they don&rsquo;t make it into
+                <li>Fix: mark renamed files as vcs dirty, so they get refreshed, otherwise they don&rsquo;t make it into
                     the next commit.</li>
                 <li>Fix: make default settings check unmodified files</li>
                 <li>Fix: improve text and link layout of check-in handler.</li>
@@ -85,25 +90,17 @@
     </change-notes>
 
     <extensions defaultExtensionNs="com.intellij">
-        <!-- Add your extensions here -->
         <checkinHandlerFactory implementation="com.vladsch.git.filecase.fixer.GitFileCaseFixerCheckinHandlerFactory" />
         <projectService serviceImplementation="com.vladsch.git.filecase.fixer.GitFixerConfiguration"/>
+        <projectService serviceImplementation="com.vladsch.git.filecase.fixer.GitFileFixerProjectRoots"/>
     </extensions>
 
     <actions>
-        <!-- Add action to version control tool window toolbar -->
         <action id="GitFileCaseFixer.ShowMismatches" class="com.vladsch.git.filecase.fixer.ShowGitFileCaseFixMismatchedAction" popup="false"
-                text="Show git file case mismatches"
-                description="Show all files where git file case does not match the file system file case"
+                text="Show Git File Case Mismatches"
+                description="Show all files where git file case does not match the file system case"
                 icon="PluginIcons.FixerIcon">
             <add-to-group group-id="ChangesViewToolbar" anchor="last"/>
         </action>
     </actions>
-
-    <project-components>
-        <component>
-            <implementation-class>com.vladsch.git.filecase.fixer.GitFileFixerProjectRoots</implementation-class>
-            <interface-class>com.vladsch.git.filecase.fixer.GitFileFixerProjectRoots</interface-class>
-        </component>
-    </project-components>
 </idea-plugin>

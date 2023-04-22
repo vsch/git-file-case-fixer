@@ -4,7 +4,7 @@ plugins {
     id "org.jetbrains.intellij" version "1.13.3"
 }
 
-def pluginVersion = "1.0.19"
+def pluginVersion = "1.0.20"
 def pluginSinceBuild = "203"
 def pluginUntilBuild = ""
 def javaVersion = "11"
@@ -37,6 +37,7 @@ sourceSets {
             resources.srcDirs = ["resources"]
         }
         kotlin {
+            //noinspection GroovyAssignabilityCheck
             srcDirs = ["src"]
         }
     }
@@ -46,6 +47,7 @@ sourceSets {
             resources.srcDirs = ["test/resources"]
         }
         kotlin {
+            //noinspection GroovyAssignabilityCheck
             srcDirs = ["test"]
         }
     }

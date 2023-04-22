@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-VERSION="1.0.19"
+VERSION="1.0.20"
 PLUGIN="git-file-case-fixer"
 HOME_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 OLD_PLUGIN=

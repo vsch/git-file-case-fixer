@@ -2,8 +2,7 @@
 
 [TOC]: # " "
 
-- [1.0.19](#1019)
-- [1.0.17](#1017)
+- [1.0.20 (2023-04-22)](#1020-2023-04-22)
 - [1.0.16](#1016)
 - [1.0.14](#1014)
 - [1.0.12](#1012)
@@ -15,13 +14,13 @@
 - [1.0.0](#100)
 - [0.0.0](#000)
 
-### 1.0.19
+### 1.0.20 (2023-04-22)
 
-* [ ] Fix: add options to `Version Control` > `Commit Dialog` before commit options.
+* Change: since build to 203.*
+* Fix: deprecated API usage, where possible without breaking compatibility with older IDEs.
+* Fix: add options to `Version Control` > `Commit` before commit options.
+* Fix: migrate to gradle build system.
 * Fix: assertion for not starting git server from Dispatch thread.
-
-### 1.0.17
-
 * Fix: If an invalid vcs root exists and is in a subdirectory which was removed, would cause
   string index out of bounds.
 

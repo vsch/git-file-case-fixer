@@ -1,38 +1,11 @@
-/*
- * MIT License
- *
- * Copyright (c) 2018, Vladimir Schneider, vladimir.schneider@gmail.com
- *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
- *
- * The above copyright notice and this permission notice shall be included in all
- * copies or substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
- * SOFTWARE.
- *
- */
-
 package com.vladsch.git.filecase.fixer;
 
+import com.intellij.openapi.Disposable;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.command.WriteCommandAction;
-import com.intellij.openapi.components.ProjectComponent;
-import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.DumbAware;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.Comparing;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vcs.ProjectLevelVcsManager;
 import com.intellij.openapi.vcs.VcsException;
@@ -46,7 +19,6 @@ import git4idea.commands.GitCommand;
 import git4idea.commands.GitLineHandler;
 import git4idea.repo.GitRepository;
 import git4idea.repo.GitRepositoryManager;
-import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.ide.PooledThreadExecutor;
@@ -56,7 +28,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -67,14 +39,12 @@ import java.util.concurrent.Future;
 
 import static com.intellij.vcsUtil.VcsFileUtil.FILE_PATH_LIMIT;
 
-public class GitFileFixerProjectRoots implements ProjectComponent, DumbAware {
+public class GitFileFixerProjectRoots implements Disposable, DumbAware {
+    static final Logger LOG = Logger.getInstance("com.vladsch.git.filecase.fixer");
+
     @NotNull final ProjectLevelVcsManager projectLevelVcsManager;
     @NotNull final static GitRepoFiles NULL_GIT_REPO_FILES = new GitRepoFiles();
 
-    static final Logger LOG = Logger.getInstance("com.vladsch.git.filecase.fixer");
-
-    @Nullable
-    private MessageBusConnection messageBus;
     final private Project myProject;
 
     @NotNull Collection<GitRepository> vcsRoots = new ArrayList<>();
@@ -82,17 +52,12 @@ public class GitFileFixerProjectRoots implements ProjectComponent, DumbAware {
     HashMap<String, GitRepoFiles> gitPathMap = new HashMap<>();  // file path (lowercase) to Map<git path lowercase, git path>
 
     @NotNull
-    public static GitFileFixerProjectRoots getInstance(@NotNull final Project project) {
-        return project.getComponent(GitFileFixerProjectRoots.class);
+    public static GitFileFixerProjectRoots getInstance(@NotNull Project project) {
+        return project.getService(GitFileFixerProjectRoots.class);
     }
 
     static Git getGitInstance() {
-        return ServiceManager.getService(git4idea.commands.Git.class);
-    }
-
-    @Override
-    public void initComponent() {
-
+        return ApplicationManager.getApplication().getService(git4idea.commands.Git.class);
     }
 
     @NotNull
@@ -118,14 +83,12 @@ public class GitFileFixerProjectRoots implements ProjectComponent, DumbAware {
     }
 
     public static void fixFileSystemCase(final List<GitRepoFile> fixFileCaseList) {
-        ApplicationManager.getApplication().invokeLater(() -> {
-            ApplicationManager.getApplication().runWriteAction(() -> {
-                for (GitRepoFile repoFile : fixFileCaseList) {
-                    assert repoFile.gitRepo.myRepoRoot != null;
-                    repoFile.matchGit();
-                }
-            });
-        });
+        ApplicationManager.getApplication().invokeLater(() -> ApplicationManager.getApplication().runWriteAction(() -> {
+            for (GitRepoFile repoFile : fixFileCaseList) {
+                assert repoFile.gitRepo.myRepoRoot != null;
+                repoFile.matchGit();
+            }
+        }));
     }
 
     public static void fixGitFileCase(final List<GitRepoFile> fixGitList) {
@@ -181,19 +144,11 @@ public class GitFileFixerProjectRoots implements ProjectComponent, DumbAware {
         int fixAction;
 
         public GitRepoFile(final GitRepoFiles repoFiles, final String fullPath, final String gitPath, final String filePath) {
-            this.gitRepo = repoFiles;
+            gitRepo = repoFiles;
             this.fullPath = fullPath;
             this.gitPath = gitPath;
             this.filePath = filePath;
             fixAction = GitFixerConfiguration.FIX_PROMPT;
-        }
-
-        public void matchFileSystem() {
-            if (!gitPath.equals(filePath)) {
-                assert gitRepo.myRepoRoot != null;
-                assert gitRepo.myProject != null;
-                matchFileSystem(gitRepo, Collections.singletonList(gitPath), Collections.singletonList(filePath));
-            }
         }
 
         static void matchFileSystem(final GitRepoFiles gitRepo, final List<String> gitPaths, final List<String> filePaths) {
@@ -218,11 +173,7 @@ public class GitFileFixerProjectRoots implements ProjectComponent, DumbAware {
         public void matchGit() {
             if (!gitPath.equals(filePath)) {
                 assert gitRepo.myRepoRoot != null;
-                ApplicationManager.getApplication().invokeLater(() -> {
-                    ApplicationManager.getApplication().runWriteAction(() -> {
-                        matchGit(gitRepo, filePath, gitPath, fullPath);
-                    });
-                });
+                ApplicationManager.getApplication().invokeLater(() -> ApplicationManager.getApplication().runWriteAction(() -> matchGit(gitRepo, filePath, gitPath, fullPath)));
             }
         }
 
@@ -252,7 +203,7 @@ public class GitFileFixerProjectRoots implements ProjectComponent, DumbAware {
 
             if (file != null) {
                 try {
-                    WriteCommandAction.runWriteCommandAction(gitRepo.myProject, () -> {
+                    WriteCommandAction.runWriteCommandAction(gitRepo.myProject, Bundle.message("git.filecase.fixer.rename.mismatched.file"), null, () -> {
                         File gitFile = new File(gitPath);
                         try {
                             // rename the parent directories that do not match also
@@ -312,25 +263,17 @@ public class GitFileFixerProjectRoots implements ProjectComponent, DumbAware {
     }
 
     public GitFileFixerProjectRoots(@NotNull final Project project) {
-        this.myProject = project;
-        this.projectLevelVcsManager = ProjectLevelVcsManager.getInstance(project);
-    }
+        myProject = project;
+        projectLevelVcsManager = ProjectLevelVcsManager.getInstance(project);
 
-    /**
-     * Invoked when the project corresponding to this component instance is opened.<p> Note that components may be
-     * created for even unopened projects and this method can be never invoked for a particular component instance (for
-     * example for default project).
-     */
-    @Override
-    public void projectOpened() {
-        messageBus = myProject.getMessageBus().connect();
-
+        //noinspection ThisEscapedInObjectConstruction
+        @Nullable MessageBusConnection messageBus = myProject.getMessageBus().connect(this);
         messageBus.subscribe(ProjectLevelVcsManager.VCS_CONFIGURATION_CHANGED, () -> {
             vcsRoots.clear();
-            List repositories = ServiceManager.getService(myProject, GitRepositoryManager.class).getRepositories();
-            for (Object repository : repositories) {
-                if (repository instanceof GitRepository) {
-                    vcsRoots.add((GitRepository) repository);
+            List<GitRepository> repositories = myProject.getService(GitRepositoryManager.class).getRepositories();
+            for (GitRepository repository : repositories) {
+                if (repository != null) {
+                    vcsRoots.add(repository);
                 }
             }
             clearCaches();
@@ -356,11 +299,9 @@ public class GitFileFixerProjectRoots implements ProjectComponent, DumbAware {
                         if (fullPath.length() >= rootPrefix.length()) {
                             String filePath = fullPath.substring(rootPrefix.length());
                             fileVisitor.consume(new GitRepoFile(repoFiles, fullPath, gitPath, filePath));
-                        } else {
-                            int tmp = 0;
                         }
                     }
-                } catch (InvalidVirtualFileAccessException e) {
+                } catch (InvalidVirtualFileAccessException ignored) {
                     //e.printStackTrace();
                 }
             }
@@ -370,7 +311,7 @@ public class GitFileFixerProjectRoots implements ProjectComponent, DumbAware {
     @Nullable
     GitRepoFile getGitRepoFile(VirtualFile file) {
         // find the VcsRoot for this file and then get its index entry
-        GitRepoFiles repositoryPathMap = null;
+        GitRepoFiles repositoryPathMap;
 
         String fileDir = file.getParent().getPath().toLowerCase() + "/";
 
@@ -389,7 +330,7 @@ public class GitFileFixerProjectRoots implements ProjectComponent, DumbAware {
                 }
             }
 
-            // lets create a jGit repository for it
+            // let's create a jGit repository for it
             if (repositoryPathMap == null) {
                 repositoryPathMap = NULL_GIT_REPO_FILES;
             }
@@ -412,45 +353,18 @@ public class GitFileFixerProjectRoots implements ProjectComponent, DumbAware {
 
         if (vcsGitFilesList.isEmpty()) {
             for (GitRepository root : vcsRoots) {
-                VirtualFile rootDir = root.getRoot();
                 repositoryPathMap = new GitRepoFiles(myProject, root.getRoot());
                 vcsGitFilesList.add(repositoryPathMap);
                 repositoryPathMap.loadIndexFiles();
             }
 
             // sort by longest prefix
-            vcsGitFilesList.sort((o1, o2) -> -Comparing.compare(o1.myRepoPrefix.length(), o2.myRepoPrefix.length()));
-        }
-    }
-
-    /**
-     * Invoked when the project corresponding to this component instance is closed.<p> Note that components may be
-     * created for even unopened projects and this method can be never invoked for a particular component instance (for
-     * example for default project).
-     */
-    @Override
-    public void projectClosed() {
-        if (messageBus != null) {
-            messageBus.disconnect();
-            messageBus = null;
+            vcsGitFilesList.sort(Comparator.comparingInt(o -> -o.myRepoPrefix.length()));
         }
     }
 
     @Override
-    public void disposeComponent() {
+    public void dispose() {
 
-    }
-
-    /**
-     * Unique name of this component. If there is another component with the same name or name is null internal
-     * assertion will occur.
-     *
-     * @return the name of this component
-     */
-    @NonNls
-    @NotNull
-    @Override
-    public String getComponentName() {
-        return "GitFileCaseFixer.ProjectRootsComponent";
     }
 }
