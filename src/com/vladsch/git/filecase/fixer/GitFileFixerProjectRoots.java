@@ -49,6 +49,7 @@ import git4idea.repo.GitRepositoryManager;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.ide.PooledThreadExecutor;
 
 import java.io.File;
 import java.io.IOException;
@@ -61,6 +62,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
 
 import static com.intellij.vcsUtil.VcsFileUtil.FILE_PATH_LIMIT;
 
@@ -99,9 +102,19 @@ public class GitFileFixerProjectRoots implements ProjectComponent, DumbAware {
         //handler.addParameters("--ignored", "--others", "--exclude-standard");
         handler.endOptions();
         //handler.addParameters(paths);
-        String output = StringUtil.join(getGitInstance().runCommand(handler).getOutput(), "\n");
-        Set<String> nonIgnoredFiles = new HashSet<>(Arrays.asList(StringUtil.splitByLines(output)));
-        return nonIgnoredFiles;
+        String output = "";
+
+        Future<Git> future = PooledThreadExecutor.INSTANCE.submit(GitFileFixerProjectRoots::getGitInstance);
+        Git gitInstance = null;
+        try {
+            gitInstance = future.get();
+        } catch (InterruptedException | ExecutionException ignored) {
+        }
+
+        if (gitInstance != null) {
+            output = StringUtil.join(gitInstance.runCommand(handler).getOutput(), "\n");
+        }
+        return new HashSet<>(Arrays.asList(StringUtil.splitByLines(output)));
     }
 
     public static void fixFileSystemCase(final List<GitRepoFile> fixFileCaseList) {

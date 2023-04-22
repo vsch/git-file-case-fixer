@@ -11,6 +11,7 @@
 - [1.0.8](#108)
 - [1.0.6](#106)
 - [1.0.4](#104)
+- [1.0.19](#1019-1)
 - [1.0.2](#102)
 - [1.0.0](#100)
 - [0.0.0](#000)
@@ -60,6 +61,10 @@
 
 * Fix: compatibility with 2016.3.8, some API uses were from later versions
 * Fix: no mismatches balloon popup would show in first project instead of the current one.
+
+### 1.0.19
+
+* Fix: assertion for not starting git server from Dispatch thread.
 
 ### 1.0.2
 
